@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>연락처 | Pa'ar Mission</title>
+  <meta name="description" content="파아르미션에 대해 더 알고 싶으신가요? 언제든지 연락해 주세요." />
+  <link rel="canonical" href="https://paarmission.org/contact.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://paarmission.org/contact.html" />
+  <meta property="og:title" content="연락처 | Pa'ar Mission" />
+  <meta property="og:description" content="파아르미션에 대해 더 알고 싶으신가요? 언제든지 연락해 주세요." />
+  <meta property="og:locale" content="ko_KR" />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <header id="navbar" class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" aria-label="Pa'ar Mission 홈으로">
+        <img src="images/logo.png" alt="Pa'ar Mission 로고" class="logo-img" />
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-menu" id="navMenu">
+        <ul>
+          <li><a href="index.html">단체 소개</a></li>
+          <li><a href="foundation.html">신학적 기초</a></li>
+          <li><a href="values.html">핵심 가치</a></li>
+          <li><a href="projects.html">주요 사역</a></li>
+          <li><a href="mission.html">단기선교</a></li>
+          <li><a href="support.html">후원</a></li>
+          <li><a href="contact.html" class="active">연락처</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="section contact" style="padding-top: calc(var(--nav-height) + 60px);">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <span class="section-tag">연락처</span>
+        <h2 class="section-title">문의하기</h2>
+        <p class="section-desc">파아르미션에 대해 더 알고 싶으신가요? 언제든지 연락해 주세요.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-form-wrap" data-aos="fade-right">
+          <form class="contact-form" id="contactForm"
+                action="https://formspree.io/f/mojbvoan"
+                method="POST">
+            <!-- Formspree 전송 후 돌아올 페이지 -->
+            <input type="hidden" name="_next" value="https://paarmission.org/contact.html?sent=1" />
+            <!-- 스팸 방지 허니팟 -->
+            <input type="text" name="_gotcha" style="display:none" />
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">이름 *</label>
+                <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required />
+              </div>
+              <div class="form-group">
+                <label for="email">이메일 *</label>
+                <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="subject">문의 유형</label>
+              <select id="subject" name="subject">
+                <option value="">선택해 주세요</option>
+                <option value="후원">후원 문의</option>
+                <option value="선교">선교 파트너십</option>
+                <option value="단기선교">단기 선교 참여</option>
+                <option value="기도">기도 후원 등록</option>
+                <option value="기도">문화사역 문의(닿길)</option>
+                <option value="기타">기타 문의</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">메시지 *</label>
+              <textarea id="message" name="message" rows="5" placeholder="문의사항을 남겨주세요." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">
+              <i class="fa-solid fa-paper-plane"></i> 문의 보내기
+            </button>
+          </form>
+          <div class="form-success" id="formSuccess" style="display:none;">
+            <i class="fa-solid fa-circle-check"></i>
+            <h4>문의가 접수되었습니다!</h4>
+            <p>빠른 시일 내에 답변 드리겠습니다.</p>
+          </div>
+        </div>
+        <div class="contact-info" data-aos="fade-left">
+          <div class="contact-info-card">
+            <h3>Pa'ar Mission</h3>
+            <p class="contact-subtitle">파아르미션</p>
+            <div class="contact-items">
+              <div class="contact-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>superddj00@gmail.com</span>
+              </div>
+              <div class="contact-item">
+                <i class="fa-brands fa-instagram"></i>
+                <span>SNS를 통해 소식을 전해드립니다</span>
+              </div>
+              <div class="contact-item">
+                <i class="fa-solid fa-clock"></i>
+                <span>평일 09:00 – 18:00 상담 가능</span>
+              </div>
+            </div>
+            <div class="contact-verse">
+              <p>"어떻게 전파자가 없이 들으리요"</p>
+              <cite>— 로마서 10:14</cite>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Page Navigation -->
+  <div class="page-nav-section">
+    <a href="support.html" class="page-nav-btn page-nav-btn--prev">
+      <i class="fa-solid fa-chevron-left"></i> 후원
+    </a>
+    <a href="index.html" class="page-nav-btn page-nav-btn--next">
+      홈으로 <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="index.html" aria-label="Pa'ar Mission 홈으로">
+            <img src="images/logo.png" alt="Pa'ar Mission 로고" class="footer-logo-img" />
+          </a>
+          <p>회복·자유·영광의 복음으로<br />하나님 나라를 확장합니다.</p>
+          <p class="footer-verse">이사야 61:1–3</p>
+        </div>
+        <div class="footer-links">
+          <h4>바로가기</h4>
+          <ul>
+            <li><a href="index.html">단체 소개</a></li>
+            <li><a href="foundation.html">신학적 기초</a></li>
+            <li><a href="values.html">핵심 가치</a></li>
+            <li><a href="projects.html">주요 사역</a></li>
+            <li><a href="mission.html">단기선교</a></li>
+            <li><a href="support.html">후원 참여</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>연락처</h4>
+          <p><i class="fa-solid fa-envelope"></i> 문의하기</p>
+          <a href="contact.html" class="btn btn-outline-light-sm">문의 폼 이동</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Pa'ar Mission (파아르미션). All rights reserved.</p>
+        <p>Isaiah 61:1–3 | 회복 · 자유 · <span class="footer-heart">♥</span> 영광</p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTop" aria-label="맨 위로">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://paarmission.org/sitemap.xml
+
+# Pa'ar Mission - https://paarmission.org
