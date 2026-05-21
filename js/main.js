@@ -56,13 +56,45 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.classList.toggle('active', isOpen);
   });
 
-  // Close menu on nav link click
+  // Close menu on nav link click (non-dropdown links only)
   navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      navMenu.classList.remove('open');
-      hamburger.classList.remove('active');
-      hamburger.setAttribute('aria-expanded', 'false');
+    // 드롭다운 토글 링크는 클릭 시 메뉴를 바로 닫지 않음
+    if (!link.classList.contains('nav-dropdown-toggle')) {
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('open');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        // 모든 드롭다운도 닫기
+        document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('open'));
+      });
+    }
+  });
+
+  // ── Dropdown Menu: 모바일 클릭 토글 / PC는 CSS hover ──
+  const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
+
+  dropdownToggles.forEach(toggle => {
+    toggle.addEventListener('click', (e) => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        // 모바일: 클릭으로 드롭다운 open/close
+        e.preventDefault();
+        const parentLi = toggle.closest('.nav-dropdown');
+        const isOpen = parentLi.classList.toggle('open');
+        // 다른 드롭다운 닫기
+        document.querySelectorAll('.nav-dropdown').forEach(d => {
+          if (d !== parentLi) d.classList.remove('open');
+        });
+      }
+      // PC: CSS hover가 처리하므로 기본 링크 동작 허용
     });
+  });
+
+  // 드롭다운 외부 클릭 시 닫기
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-dropdown')) {
+      document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('open'));
+    }
   });
 
   // ── Hamburger Icon Animation ──────────────────────────────

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>단기선교 — 현황 | Pa'ar Mission</title>
+  <meta name="description" content="파아르미션 단기선교 현황 — 영상 시리즈, 기도편지, 감사편지(선교보고)를 확인하세요." />
+  <link rel="canonical" href="https://paarmission.org/mission-status.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://paarmission.org/mission-status.html" />
+  <meta property="og:title" content="단기선교 — 현황 | Pa'ar Mission" />
+  <meta property="og:description" content="파아르미션 단기선교 현황 — 영상 시리즈, 기도편지, 감사편지(선교보고)를 확인하세요." />
+  <meta property="og:locale" content="ko_KR" />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <header id="navbar" class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" aria-label="Pa'ar Mission 홈으로">
+        <img src="images/logo.png" alt="Pa'ar Mission 로고" class="logo-img" />
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-menu" id="navMenu">
+        <ul>
+          <li><a href="index.html">단체 소개</a></li>
+          <li><a href="foundation.html">신학적 기초</a></li>
+          <li><a href="values.html">핵심 가치</a></li>
+          <li><a href="projects.html">주요 사역</a></li>
+          <li class="nav-dropdown">
+            <a href="mission.html" class="active nav-dropdown-toggle">단기선교 <i class="fa-solid fa-chevron-down nav-arrow"></i></a>
+            <ul class="nav-submenu">
+              <li><a href="mission.html">사역</a></li>
+              <li><a href="mission-status.html" class="active">현황</a></li>
+            </ul>
+          </li>
+          <li><a href="support.html">후원</a></li>
+          <li><a href="contact.html">연락처</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ 단기선교 현황 ============ -->
+  <section id="mission-status" class="section short-mission" style="padding-top: calc(var(--nav-height) + 60px);">
+    <div class="container">
+
+      <!-- 페이지 헤더 -->
+      <div class="section-header" data-aos="fade-up">
+        <span class="section-tag">단기선교</span>
+        <h2 class="section-title">현황</h2>
+        <p class="section-desc">2025년 단기선교 이야기 — 영상, 기도편지, 선교보고를 함께 나눕니다.</p>
+      </div>
+
+      <!-- 서브 탭 네비게이션 -->
+      <div class="mission-subnav" data-aos="fade-up">
+        <a href="mission.html" class="mission-subnav-btn">
+          <i class="fa-solid fa-hands-helping"></i> 사역
+        </a>
+        <a href="mission-status.html" class="mission-subnav-btn active">
+          <i class="fa-solid fa-chart-line"></i> 현황
+        </a>
+      </div>
+
+      <!-- ── 2025 영상 시리즈 ── -->
+      <div class="sm-videos" data-aos="fade-up">
+        <div class="sm-videos-header">
+          <h3 class="sm-section-title">
+            <i class="fa-brands fa-youtube" style="color:#FF0000;"></i>
+            2025 단기선교 영상 시리즈
+          </h3>
+          <div class="sm-video-tabs">
+            <button class="sm-vtab active" data-vtab="episodes">
+              <i class="fa-solid fa-film"></i> 에피소드 <span class="vtab-count">8</span>
+            </button>
+            <button class="sm-vtab" data-vtab="spinoff">
+              <i class="fa-solid fa-star"></i> 스핀오프 <span class="vtab-count">2</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ── YouTube 라이트박스 모달 ── -->
+        <div id="ytModal" class="yt-modal" role="dialog" aria-modal="true" aria-label="유튜브 영상 플레이어">
+          <div class="yt-modal-backdrop"></div>
+          <div class="yt-modal-box">
+            <button class="yt-modal-close" id="ytModalClose" aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+            <div class="yt-modal-iframe-wrap">
+              <iframe id="ytModalIframe"
+                src=""
+                title="Pa'ar Mission 영상"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </div>
+            <div class="yt-modal-info">
+              <span class="sm-now-tag">NOW PLAYING</span>
+              <h4 id="ytModalTitle"></h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- 에피소드 탭 -->
+        <div class="sm-vtab-content active" id="vtab-episodes">
+          <div class="sm-card-grid">
+
+            <article class="sm-video-card" data-vid="LV-i6PvUQiQ" data-title="ep.1 — 김목사 충격발언">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/LV-i6PvUQiQ/mqdefault.jpg" alt="ep.1 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.1</span>
+                <p>김목사 충격발언</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="XxNbuaSJ5t8" data-title="ep.2 — 애는 착해요 :)">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/XxNbuaSJ5t8/mqdefault.jpg" alt="ep.2 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.2</span>
+                <p>애는 착해요 :)</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="Li7cr-9BAqk" data-title="ep.3 — 관심 받고 싶을 나이 서른 아홉짤">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/Li7cr-9BAqk/mqdefault.jpg" alt="ep.3 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.3</span>
+                <p>관심 받고 싶을 나이 서른 아홉짤</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="fOQbtX1jZRI" data-title="ep.4 — 태국 교회가 이것이 필요한 이유!">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/fOQbtX1jZRI/mqdefault.jpg" alt="ep.4 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.4</span>
+                <p>태국 교회가 이것이 필요한 이유!</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="Ton5Iat_1FE" data-title="ep.5 — 천사 강림">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/Ton5Iat_1FE/mqdefault.jpg" alt="ep.5 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.5</span>
+                <p>천사 강림</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="8C7T1lL0m6o" data-title="ep.6 — 바보 3명 &amp; 18살 형님">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/8C7T1lL0m6o/mqdefault.jpg" alt="ep.6 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.6</span>
+                <p>바보 3명 &amp; 18살 형님</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="Ug5S-vl8ZA0" data-title="ep.7 — 선교에는 갈등이 있다">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/Ug5S-vl8ZA0/mqdefault.jpg" alt="ep.7 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.7</span>
+                <p>선교에는 갈등이 있다</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="f7y-Oh0ITwE" data-title="ep.8 — 왜 하필 태국이었나요?!">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/f7y-Oh0ITwE/mqdefault.jpg" alt="ep.8 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag">ep.8</span>
+                <p>왜 하필 태국이었나요?!</p>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <!-- 스핀오프 탭 -->
+        <div class="sm-vtab-content" id="vtab-spinoff">
+          <div class="sm-card-grid sm-card-grid--2">
+
+            <article class="sm-video-card" data-vid="gSqkbFZyP5E" data-title="Spin Off 1 — 선교사님의 말말말 : 왜 하필 태국이었나요?!">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/gSqkbFZyP5E/mqdefault.jpg" alt="Spin Off 1 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag sm-ep-tag--spin">Spin Off 1</span>
+                <p>선교사님의 말말말 : 왜 하필 태국이었나요?!</p>
+              </div>
+            </article>
+
+            <article class="sm-video-card" data-vid="HVHlQQ4d-_8" data-title="Spin Off 2 — 선교사님의 말말말 : 100% 후원으로 살아남기">
+              <div class="sm-card-thumb">
+                <img src="https://img.youtube.com/vi/HVHlQQ4d-_8/mqdefault.jpg" alt="Spin Off 2 썸네일" loading="lazy" />
+                <div class="sm-card-play"><i class="fa-brands fa-youtube"></i></div>
+              </div>
+              <div class="sm-card-body">
+                <span class="sm-ep-tag sm-ep-tag--spin">Spin Off 2</span>
+                <p>선교사님의 말말말 : 100% 후원으로 살아남기</p>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <div class="sm-youtube-link" data-aos="fade-up">
+          <a href="https://www.youtube.com/@paarmission" target="_blank" rel="noopener" class="btn btn-yt">
+            <i class="fa-brands fa-youtube"></i> 유튜브 채널 전체 보기
+          </a>
+        </div>
+      </div>
+
+      <!-- ── 편지함 섹션 (Notion 연동) ── -->
+      <div class="letter-section" id="prayer-letters" data-aos="fade-up">
+
+        <!-- 기도편지 -->
+        <div class="letter-section-header">
+          <div class="letter-section-title-wrap">
+            <span class="letter-tag prayer-tag"><i class="fa-solid fa-hands-praying"></i> 기도편지</span>
+            <h3>단기선교 기도편지</h3>
+            <p>파아르미션의 선교 현장 소식과 기도 제목을 나눕니다.</p>
+          </div>
+        </div>
+        <div class="letter-grid" id="notion-prayer-grid">
+          <!-- Notion에서 동적으로 불러옵니다 -->
+        </div>
+
+        <!-- 감사편지 -->
+        <div class="letter-section-header" style="margin-top: 56px;">
+          <div class="letter-section-title-wrap">
+            <span class="letter-tag thanks-tag"><i class="fa-solid fa-heart"></i> 감사편지</span>
+            <h3>단기선교 감사편지 (선교보고)</h3>
+            <p>선교 결산 보고 및 감사의 마음을 전합니다.</p>
+          </div>
+        </div>
+        <div class="letter-grid" id="notion-thanks-grid">
+          <!-- Notion에서 동적으로 불러옵니다 -->
+        </div>
+
+      </div>
+
+      <!-- 기도편지 라이트박스 모달 -->
+      <div id="letterModal" class="letter-modal" role="dialog" aria-modal="true">
+        <div class="letter-modal-backdrop" onclick="closeLetterModal()"></div>
+        <div class="letter-modal-box">
+          <div class="letter-modal-header">
+            <h4 id="letterModalTitle">3rd 기도편지</h4>
+            <button class="letter-modal-close" onclick="closeLetterModal()" aria-label="닫기">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="letter-modal-viewer">
+            <button class="letter-nav letter-nav--prev" id="letterPrev" onclick="changeLetterPage(-1)" aria-label="이전">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <div class="letter-modal-img-wrap" id="letterModalImgWrap">
+              <img id="letterModalImg" src="" alt="기도편지" />
+            </div>
+            <button class="letter-nav letter-nav--next" id="letterNext" onclick="changeLetterPage(1)" aria-label="다음">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+          <div class="letter-modal-footer">
+            <span id="letterPageInfo" class="letter-page-info">1 / 4</span>
+            <div class="letter-thumbs" id="letterThumbs"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Page Navigation -->
+  <div class="page-nav-section">
+    <a href="mission.html" class="page-nav-btn page-nav-btn--prev">
+      <i class="fa-solid fa-chevron-left"></i> 단기선교 사역
+    </a>
+    <a href="support.html" class="page-nav-btn page-nav-btn--next">
+      후원 <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="index.html" aria-label="Pa'ar Mission 홈으로">
+            <img src="images/logo.png" alt="Pa'ar Mission 로고" class="footer-logo-img" />
+          </a>
+          <p>회복·자유·영광의 복음으로<br />하나님 나라를 확장합니다.</p>
+          <p class="footer-verse">이사야 61:1–3</p>
+        </div>
+        <div class="footer-links">
+          <h4>바로가기</h4>
+          <ul>
+            <li><a href="index.html">단체 소개</a></li>
+            <li><a href="foundation.html">신학적 기초</a></li>
+            <li><a href="values.html">핵심 가치</a></li>
+            <li><a href="projects.html">주요 사역</a></li>
+            <li><a href="mission.html">단기선교 — 사역</a></li>
+            <li><a href="mission-status.html">단기선교 — 현황</a></li>
+            <li><a href="support.html">후원 참여</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>연락처</h4>
+          <p><i class="fa-solid fa-envelope"></i> 문의하기</p>
+          <a href="contact.html" class="btn btn-outline-light-sm">문의 폼 이동</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Pa'ar Mission (파아르미션). All rights reserved.</p>
+        <p>Isaiah 61:1–3 | 회복 · 자유 · <span class="footer-heart">♥</span> 영광</p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTop" aria-label="맨 위로">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/notion-v4.js"></script>
+</body>
+</html>

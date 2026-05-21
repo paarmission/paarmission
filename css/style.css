@@ -278,6 +278,172 @@ p  { color: var(--color-text); }
 .navbar:not(.scrolled) .hamburger span { background: #fff; }
 
 /* ============================================================
+   NAVBAR — DROPDOWN  (단기선교 하위 메뉴)
+   ============================================================ */
+
+/* 드롭다운 부모 li */
+.nav-dropdown {
+  position: relative;
+}
+
+/* 드롭다운 토글 링크 — 화살표 아이콘 */
+.nav-arrow {
+  font-size: .65rem;
+  margin-left: 3px;
+  vertical-align: middle;
+  transition: transform var(--transition);
+  display: inline-block;
+}
+.nav-dropdown:hover .nav-arrow,
+.nav-dropdown.open  .nav-arrow {
+  transform: rotate(180deg);
+}
+
+/* 서브메뉴 */
+.nav-submenu {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  min-width: 130px;
+  background: rgba(15, 23, 42, 0.97);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--radius-md);
+  padding: 8px 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease;
+  z-index: 200;
+  flex-direction: column !important;  /* ul 방향 덮어쓰기 */
+  gap: 0 !important;
+}
+/* 삼각형 화살표 */
+.nav-submenu::before {
+  content: '';
+  position: absolute;
+  top: -6px; left: 50%;
+  transform: translateX(-50%);
+  width: 12px; height: 6px;
+  background: rgba(15, 23, 42, 0.97);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* PC: hover로 서브메뉴 표시 */
+.nav-dropdown:hover .nav-submenu {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* 모바일 open 클래스로도 표시 */
+.nav-dropdown.open .nav-submenu {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-submenu li {
+  list-style: none;
+}
+.nav-submenu li a {
+  display: block;
+  padding: 9px 22px;
+  font-size: .85rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.78) !important;
+  white-space: nowrap;
+  transition: color var(--transition), background var(--transition);
+  border-radius: 0;
+  position: relative;
+}
+.nav-submenu li a::after { display: none !important; } /* 언더라인 제거 */
+.nav-submenu li a:hover {
+  color: var(--color-accent-light) !important;
+  background: rgba(255,255,255,.07);
+}
+.nav-submenu li a.active {
+  color: var(--color-accent-light) !important;
+  font-weight: 700;
+}
+
+/* ── 모바일: 드롭다운을 세로 확장형으로 ── */
+@media (max-width: 768px) {
+  .nav-submenu {
+    position: static;
+    transform: none;
+    opacity: 1;
+    pointer-events: all;
+    background: rgba(0,0,0,.08);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    display: none;       /* 기본 숨김 */
+    min-width: 0;
+  }
+  .nav-submenu::before { display: none; }
+  .nav-dropdown.open .nav-submenu {
+    display: flex;
+    flex-direction: column;
+  }
+  .nav-submenu li a {
+    padding: 8px 0 8px 20px;
+    font-size: .93rem;
+    color: var(--color-text) !important;
+    border-left: 3px solid var(--color-accent);
+    margin-left: 8px;
+  }
+  .nav-submenu li a:hover { color: var(--color-accent-dark) !important; background: none; }
+  .nav-submenu li a.active { color: var(--color-accent-dark) !important; font-weight: 700; }
+}
+
+/* ============================================================
+   MISSION SUBNAV  (사역 ↔ 현황 탭 버튼)
+   ============================================================ */
+.mission-subnav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 40px;
+  justify-content: center;
+}
+.mission-subnav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 26px;
+  border-radius: 100px;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-white);
+  border: 1.5px solid var(--color-border);
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.mission-subnav-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold);
+}
+.mission-subnav-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 14px rgba(52,61,74,.28);
+}
+.mission-subnav-btn.active:hover {
+  background: var(--color-primary-light);
+  color: #fff;
+  border-color: var(--color-primary-light);
+}
+@media (max-width: 480px) {
+  .mission-subnav { gap: 8px; }
+  .mission-subnav-btn { padding: 9px 18px; font-size: .84rem; }
+}
+
+/* ============================================================
    HERO
    ============================================================ */
 .hero {
