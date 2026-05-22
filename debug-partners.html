@@ -2,65 +2,49 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>Worker 응답 디버그</title>
+  <title>속성 키 디버그</title>
   <style>
     body { font-family: monospace; padding: 24px; background: #f5f5f5; }
-    pre { background: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 8px; overflow: auto; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 400px; }
-    h2 { margin-top: 32px; color: #333; }
-    .ok  { background: #d4edda; color: #155724; padding: 6px 14px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
-    .err { background: #f8d7da; color: #721c24; padding: 6px 14px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
+    pre  { background: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 8px;
+           white-space: pre-wrap; word-break: break-all; font-size: 12px; }
+    h2   { margin-top: 28px; color: #333; }
   </style>
 </head>
 <body>
-  <h1>🔍 Worker 응답 디버그</h1>
-  <p>확인 중... (콘솔도 함께 확인해 주세요)</p>
+  <h1>🔍 선교사 속성 키 확인</h1>
 
-  <h2>협력 선교사 (/partners-missionary)</h2>
-  <div id="s1">대기중...</div>
-  <pre id="p1">-</pre>
+  <h2>/partners-missionary 첫 번째 항목 속성 전체</h2>
+  <pre id="out">로딩 중...</pre>
 
-  <h2>협력 기업 (/partners-company)</h2>
-  <div id="s2">대기중...</div>
-  <pre id="p2">-</pre>
+  <script>
+    fetch('https://dark-pine-8ced.superddj00.workers.dev/partners-missionary')
+      .then(r => r.json())
+      .then(data => {
+        const pages = data.results || [];
+        if (!pages.length) { document.getElementById('out').textContent = '결과 없음'; return; }
 
-<script>
-const W = 'https://dark-pine-8ced.superddj00.workers.dev';
+        const p = pages[0];
+        // 속성 키와 타입, 값을 모두 출력
+        const props = {};
+        for (const [key, val] of Object.entries(p.properties)) {
+          let value = '(파싱불가)';
+          try {
+            if (val.type === 'title')        value = val.title.map(t=>t.plain_text).join('');
+            else if (val.type === 'rich_text') value = val.rich_text.map(t=>t.plain_text).join('');
+            else if (val.type === 'select')    value = val.select?.name || '(비어있음)';
+            else if (val.type === 'multi_select') value = val.multi_select.map(s=>s.name).join(', ') || '(비어있음)';
+            else if (val.type === 'url')       value = val.url || '(비어있음)';
+            else if (val.type === 'files')     value = val.files?.[0] ? '파일있음' : '(비어있음)';
+            else value = '(type: ' + val.type + ')';
+          } catch(e) { value = '오류: ' + e.message; }
+          props[key] = { type: val.type, value };
+        }
 
-function show(statusId, preId, data) {
-  const pages = (data && data.results) || [];
-  document.getElementById(statusId).className = 'ok';
-  document.getElementById(statusId).textContent = '✅ ' + pages.length + '개';
-
-  if (!pages.length) {
-    document.getElementById(preId).textContent = '결과 없음';
-    return;
-  }
-  const p = pages[0];
-  const out = {
-    id: p.id,
-    _thumbnail: p._thumbnail || null,
-    cover: p.cover ? {type: p.cover.type, url: p.cover.type==='external' ? p.cover.external?.url : p.cover.file?.url} : null,
-    prop_keys: Object.keys(p.properties || {})
-  };
-  document.getElementById(preId).textContent = JSON.stringify(out, null, 2);
-  console.log('[DEBUG] ' + statusId, out);
-}
-
-function fail(statusId, preId, err) {
-  document.getElementById(statusId).className = 'err';
-  document.getElementById(statusId).textContent = '❌ ' + err;
-  document.getElementById(preId).textContent = err;
-}
-
-fetch(W + '/partners-missionary')
-  .then(r => r.json())
-  .then(d => show('s1','p1',d))
-  .catch(e => fail('s1','p1',e.message));
-
-fetch(W + '/partners-company')
-  .then(r => r.json())
-  .then(d => show('s2','p2',d))
-  .catch(e => fail('s2','p2',e.message));
-</script>
+        document.getElementById('out').textContent =
+          '=== 페이지 ID: ' + p.id + ' ===\n\n' +
+          JSON.stringify(props, null, 2);
+      })
+      .catch(e => { document.getElementById('out').textContent = '에러: ' + e.message; });
+  </script>
 </body>
 </html>

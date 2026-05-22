@@ -153,7 +153,7 @@
   function missionaryCard(page, idx) {
     const p      = page.properties;
     const name   = titleProp(p);
-    const field  = prop(p, '사역지') || prop(p, '지역') || prop(p, 'Field') || '';
+    const field  = prop(p, '나라') || prop(p, '사역지') || prop(p, '지역') || prop(p, 'Field') || '';
     const org    = prop(p, '소속') || prop(p, '단체') || prop(p, 'Organization') || '';
     const desc   = prop(p, '소개') || prop(p, '설명') || prop(p, 'Description') || '';
     const thumb  = resolveThumbnail(page, prop(p, '사진') || prop(p, 'Photo') || '');
