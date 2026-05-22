@@ -2680,3 +2680,305 @@ p  { color: var(--color-text); }
 .letter-section .letter-section-header + .letter-grid {
   margin-bottom: 0;
 }
+
+/* ============================================================
+   PARTNERS — 협력단체 페이지 (partners.html)
+   ============================================================ */
+
+/* 페이지 히어로 (다크 배경) */
+.page-hero {
+  min-height: 320px;
+  background: linear-gradient(135deg, #10151C 0%, #1E2530 60%, #2C3440 100%);
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 56px;
+  padding-top: calc(var(--nav-height) + 48px);
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(207,167,66,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.page-hero-inner {
+  position: relative; z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.page-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--color-accent-light);
+  background: rgba(207,167,66,.15);
+  border: 1px solid rgba(207,167,66,.3);
+  padding: 5px 16px;
+  border-radius: 100px;
+}
+.page-hero-title {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-family: var(--font-serif);
+  color: #fff;
+  line-height: 1.2;
+  margin: 0;
+}
+.page-hero-desc {
+  font-size: .97rem;
+  color: rgba(255,255,255,.6);
+  line-height: 1.75;
+  max-width: 600px;
+  margin: 0;
+}
+
+/* 파트너 섹션 구분선 */
+.partners-section {
+  background: var(--color-bg);
+  padding: 80px 0;
+}
+.partners-section:nth-child(even) {
+  background: var(--color-bg-alt);
+}
+
+/* 파트너 그리드 */
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.partners-grid--2 {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+/* ── 기본 파트너 카드 ─────────────────────────────────────── */
+.partner-card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+}
+.partner-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+  border-color: rgba(207,167,66,.4);
+}
+
+/* 스켈레톤 카드 */
+.partner-card--skeleton {
+  pointer-events: none;
+}
+.skeleton-box {
+  background: linear-gradient(90deg, #e8e4d8 25%, #f3f0e6 50%, #e8e4d8 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  border-radius: var(--radius-sm);
+}
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8e4d8 25%, #f3f0e6 50%, #e8e4d8 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+.skeleton-line.short { height: 10px; }
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 로고 영역 */
+.partner-card-logo {
+  width: 100%;
+  height: 110px;
+  background: var(--color-bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.partner-card-logo img {
+  max-height: 80px;
+  max-width: 85%;
+  object-fit: contain;
+  display: block;
+}
+/* 스켈레톤용 로고 박스 */
+.partner-card--skeleton .partner-card-logo {
+  height: 110px;
+}
+
+/* 사진 영역 (선교사 카드용) */
+.partner-card-photo {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.partner-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition);
+}
+.partner-card:hover .partner-card-photo img {
+  transform: scale(1.04);
+}
+
+/* 로고/아이콘 플레이스홀더 */
+.partner-logo-placeholder {
+  width: 64px; height: 64px;
+  background: rgba(207,167,66,.12);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: var(--color-accent-dark);
+}
+.partner-logo-placeholder--person {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  font-size: 2rem;
+  background: rgba(94,104,117,.1);
+  color: var(--color-text-muted);
+}
+
+/* 카드 바디 */
+.partner-card-body {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* 이름 */
+.partner-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  font-family: var(--font-serif);
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* 유형 태그 */
+.partner-type-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+  background: rgba(207,167,66,.14);
+  border: 1px solid rgba(207,167,66,.25);
+  padding: 3px 10px;
+  border-radius: 100px;
+  align-self: flex-start;
+}
+.partner-type-tag--company {
+  color: var(--color-primary);
+  background: rgba(52,61,74,.08);
+  border-color: rgba(52,61,74,.2);
+}
+
+/* 지역 / 사역지 */
+.partner-region,
+.partner-org {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .84rem;
+  color: var(--color-text-muted);
+}
+.partner-region i,
+.partner-org i {
+  font-size: .8rem;
+  color: var(--color-accent-dark);
+  flex-shrink: 0;
+}
+
+/* 설명 */
+.partner-desc {
+  font-size: .86rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* 링크 버튼 */
+.partner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--color-accent-dark);
+  margin-top: auto;
+  padding-top: 8px;
+  transition: color var(--transition), gap var(--transition);
+}
+.partner-link:hover {
+  color: var(--color-accent);
+  gap: 9px;
+}
+.partner-link i { font-size: .75rem; }
+
+/* 빈 상태 / 에러 */
+.partner-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 64px 24px;
+  color: var(--color-text-muted);
+  font-size: .95rem;
+  text-align: center;
+}
+.partner-empty i {
+  font-size: 2.2rem;
+  color: var(--color-accent-light);
+  opacity: .6;
+}
+
+/* 선교사 카드 — person 레이아웃 */
+.partner-card--person .partner-card-body {
+  padding-top: 18px;
+}
+
+/* ── 반응형 ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page-hero { min-height: 260px; padding-bottom: 40px; }
+  .page-hero-title { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+  .partners-section { padding: 56px 0; }
+  .partners-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .partners-grid--2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .partners-grid { grid-template-columns: 1fr; }
+  .partner-card-logo { height: 90px; }
+  .partner-card-photo { height: 180px; }
+}

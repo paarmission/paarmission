@@ -7,8 +7,12 @@
 
 const NOTION_API_KEY = 'ntn_k86292911399zdoKzaCOSKhB2TKGlHKc3izS6mRDc4Z8PK';
 const NOTION_VERSION = '2022-06-28';
-const DB_PRAYER = '36520258888380f49454ffa1be6f9701';
-const DB_THANKS = '3652025888838074bd91f1ea74de92f9';
+const DB_PRAYER  = '36520258888380f49454ffa1be6f9701';
+const DB_THANKS  = '3652025888838074bd91f1ea74de92f9';
+/* 협력단체 DB */
+const DB_CHURCH      = '36820258888380188fe3c24f7a17a818';
+const DB_MISSIONARY  = '368202588883805a91b8cb13197ac380';
+const DB_COMPANY     = '3682025888838026a2a2db6dd0be801b';
 
 const CORS = {
   'Access-Control-Allow-Origin' : '*',
@@ -51,6 +55,15 @@ async function queryDB(dbId) {
   return nPost('/databases/' + dbId + '/query', {
     sorts: [
       { property: '날짜', direction: 'descending' },
+    ],
+  });
+}
+
+/* ── 협력단체 DB 쿼리 (생성순) ───────────────────────────── */
+async function queryPartnersDB(dbId) {
+  return nPost('/databases/' + dbId + '/query', {
+    sorts: [
+      { timestamp: 'created_time', direction: 'ascending' },
     ],
   });
 }
@@ -175,6 +188,15 @@ export default {
       } else if (path === '/thanks') {
         /* v4: 썸네일 포함 */
         data = await queryDBWithThumbnails(DB_THANKS);
+
+      } else if (path === '/partners-church') {
+        data = await queryPartnersDB(DB_CHURCH);
+
+      } else if (path === '/partners-missionary') {
+        data = await queryPartnersDB(DB_MISSIONARY);
+
+      } else if (path === '/partners-company') {
+        data = await queryPartnersDB(DB_COMPANY);
 
       } else if (path.startsWith('/page/')) {
         const id = path.slice(6);
