@@ -2980,6 +2980,11 @@ p  { color: var(--color-text); }
   background: rgba(52,61,74,.08);
   border-color: rgba(52,61,74,.2);
 }
+.partner-type-tag--missionary {
+  color: #2563a8;
+  background: rgba(37,99,168,.1);
+  border-color: rgba(37,99,168,.25);
+}
 
 /* 지역 / 사역지 */
 .partner-region,

@@ -160,16 +160,16 @@
     const nUrl   = notionUrl(page);
     const delay  = idx * 80;
 
-    const fieldHtml = field ? `<span class="partner-region"><i class="fa-solid fa-globe"></i> ${esc(field)}</span>` : '';
-    const orgHtml   = org   ? `<span class="partner-org"><i class="fa-solid fa-building"></i> ${esc(org)}</span>` : '';
-    const descHtml  = desc  ? `<p class="partner-desc">${esc(desc)}</p>` : '';
+    const fieldTagHtml = field ? `<span class="partner-type-tag partner-type-tag--missionary"><i class="fa-solid fa-globe" style="font-size:.7rem;"></i> ${esc(field)}</span>` : '';
+    const orgHtml      = org   ? `<span class="partner-org"><i class="fa-solid fa-building"></i> ${esc(org)}</span>` : '';
+    const descHtml     = desc  ? `<p class="partner-desc">${esc(desc)}</p>` : '';
 
     return `
       <div class="partner-card partner-card--person" data-aos="fade-up" data-aos-delay="${delay}">
         ${thumbHtml(thumb, 'user', nUrl)}
         <div class="partner-card-body">
+          ${fieldTagHtml}
           <h4 class="partner-name">${esc(name)}</h4>
-          ${fieldHtml}
           ${orgHtml}
           ${descHtml}
           <div class="partner-card-actions">
