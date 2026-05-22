@@ -1,19 +1,20 @@
 /**
  * Pa'ar Mission — Cloudflare Worker v4
  * Notion API 프록시 (CORS 해결 + 이미지 프록시)
- * 변경: /prayer, /thanks 응답에 thumbnail 필드 포함
  * Worker URL: https://dark-pine-8ced.superddj00.workers.dev/
  */
 
 const NOTION_API_KEY = 'ntn_k86292911399zdoKzaCOSKhB2TKGlHKc3izS6mRDc4Z8PK';
 const NOTION_VERSION = '2022-06-28';
-const DB_PRAYER  = '36520258888380f49454ffa1be6f9701';
-const DB_THANKS  = '3652025888838074bd91f1ea74de92f9';
-/* 협력단체 DB */
+
+/* ── DB IDs ───────────────────────────────────────────────── */
+const DB_PRAYER      = '36520258888380f49454ffa1be6f9701';
+const DB_THANKS      = '3652025888838074bd91f1ea74de92f9';
 const DB_CHURCH      = '36820258888380188fe3c24f7a17a818';
 const DB_MISSIONARY  = '368202588883805a91b8cb13197ac380';
 const DB_COMPANY     = '3682025888838026a2a2db6dd0be801b';
 
+/* ── CORS 헤더 ────────────────────────────────────────────── */
 const CORS = {
   'Access-Control-Allow-Origin' : '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -22,8 +23,8 @@ const CORS = {
 };
 
 const CORS_IMG = {
-  'Access-Control-Allow-Origin' : '*',
-  'Cache-Control'               : 'public, max-age=3600',
+  'Access-Control-Allow-Origin': '*',
+  'Cache-Control'              : 'public, max-age=3600',
 };
 
 /* ── Notion API 헬퍼 ──────────────────────────────────────── */
@@ -50,22 +51,33 @@ async function nPost(endpoint, body) {
   return res.json();
 }
 
-/* ── DB 쿼리 (날짜 속성 내림차순) ───────────────────────── */
+/* ── DB 쿼리 (날짜 속성 내림차순 — 기도편지/감사편지용) ──── */
 async function queryDB(dbId) {
   return nPost('/databases/' + dbId + '/query', {
-    sorts: [
-      { property: '날짜', direction: 'descending' },
-    ],
+    sorts: [{ property: '날짜', direction: 'descending' }],
   });
 }
 
-/* ── 협력단체 DB 쿼리 (생성순) ───────────────────────────── */
+/* ── DB 쿼리 (생성순 오름차순 — 협력단체용) ──────────────── */
 async function queryPartnersDB(dbId) {
   return nPost('/databases/' + dbId + '/query', {
-    sorts: [
-      { timestamp: 'created_time', direction: 'ascending' },
-    ],
+    sorts: [{ timestamp: 'created_time', direction: 'ascending' }],
   });
+}
+
+/* ── 협력단체 DB 목록 + 썸네일 병렬 조회 ─────────────────── */
+async function queryPartnersDBWithThumbnails(dbId) {
+  const data  = await queryPartnersDB(dbId);
+  const pages = data.results || [];
+
+  const thumbPromises = pages.map(function (p) { return getFirstImage(p.id); });
+  const thumbs = await Promise.all(thumbPromises);
+
+  pages.forEach(function (p, i) {
+    if (thumbs[i]) p._thumbnail = thumbs[i];
+  });
+
+  return data;
 }
 
 /* ── 블록 목록 조회 ───────────────────────────────────────── */
@@ -93,7 +105,7 @@ async function getFirstImage(pageId) {
         if (src) return '/img?url=' + encodeURIComponent(src);
       }
     }
-  } catch(e) {}
+  } catch (e) {}
   return null;
 }
 
@@ -117,7 +129,7 @@ async function collectImages(blockId, depth) {
         src = ib.file && ib.file.url;
       }
       const cap = ib.caption
-        ? ib.caption.map(function(c) { return c.plain_text; }).join('')
+        ? ib.caption.map(function (c) { return c.plain_text; }).join('')
         : '';
       if (src) {
         const proxyUrl = '/img?url=' + encodeURIComponent(src);
@@ -134,23 +146,19 @@ async function collectImages(blockId, depth) {
   return images;
 }
 
-/* ── DB 목록 + 썸네일 병렬 조회 ──────────────────────────── */
+/* ── DB 목록 + 썸네일 병렬 조회 (기도편지/감사편지용) ──────── */
 async function queryDBWithThumbnails(dbId) {
   const data  = await queryDB(dbId);
   const pages = data.results || [];
 
-  /* 각 페이지의 첫 이미지를 병렬로 가져옴 */
-  const thumbPromises = pages.map(function(p) { return getFirstImage(p.id); });
+  const thumbPromises = pages.map(function (p) { return getFirstImage(p.id); });
   const thumbs = await Promise.all(thumbPromises);
 
-  /* 각 페이지에 thumbnail 필드 추가 */
-  pages.forEach(function(p, i) {
-    if (thumbs[i]) {
-      p._thumbnail = thumbs[i]; // /img?url=... 형태 (Worker 상대경로)
-    }
+  pages.forEach(function (p, i) {
+    if (thumbs[i]) p._thumbnail = thumbs[i];
   });
 
-  return data; // results 배열이 수정된 채로 반환
+  return data;
 }
 
 /* ── Worker 라우터 ────────────────────────────────────────── */
@@ -159,6 +167,7 @@ export default {
     const url  = new URL(request.url);
     const path = url.pathname;
 
+    /* Preflight */
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS });
     }
@@ -171,7 +180,7 @@ export default {
         if (!imgUrl) {
           return new Response('missing url', { status: 400 });
         }
-        const imgRes = await fetch(imgUrl);
+        const imgRes      = await fetch(imgUrl);
         const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
         return new Response(imgRes.body, {
           status : imgRes.status,
@@ -181,32 +190,36 @@ export default {
 
       let data;
 
+      /* ── 기도편지 ── */
       if (path === '/prayer') {
-        /* v4: 썸네일 포함 */
         data = await queryDBWithThumbnails(DB_PRAYER);
 
+      /* ── 감사편지 ── */
       } else if (path === '/thanks') {
-        /* v4: 썸네일 포함 */
         data = await queryDBWithThumbnails(DB_THANKS);
 
+      /* ── 협력 교회 & 단체 ── */
       } else if (path === '/partners-church') {
-        data = await queryPartnersDB(DB_CHURCH);
+        data = await queryPartnersDBWithThumbnails(DB_CHURCH);
 
+      /* ── 협력 선교사 ── */
       } else if (path === '/partners-missionary') {
-        data = await queryPartnersDB(DB_MISSIONARY);
+        data = await queryPartnersDBWithThumbnails(DB_MISSIONARY);
 
+      /* ── 협력 기업 ── */
       } else if (path === '/partners-company') {
-        data = await queryPartnersDB(DB_COMPANY);
+        data = await queryPartnersDBWithThumbnails(DB_COMPANY);
 
+      /* ── 페이지 단건 조회 ── */
       } else if (path.startsWith('/page/')) {
         const id = path.slice(6);
         data = await getPage(id);
 
+      /* ── 블록 이미지 수집 ── */
       } else if (path.startsWith('/blocks/')) {
         const id     = path.slice(8);
         const images = await collectImages(id, 0);
 
-        // 페이지 커버
         let coverProxyUrl = null;
         try {
           const pageInfo = await getPage(id);
@@ -217,10 +230,11 @@ export default {
             else if (cover.type === 'file') coverSrc = cover.file && cover.file.url;
             if (coverSrc) coverProxyUrl = '/img?url=' + encodeURIComponent(coverSrc);
           }
-        } catch(e) {}
+        } catch (e) {}
 
         data = { results: images, cover: coverProxyUrl };
 
+      /* ── 헬스체크 ── */
       } else {
         data = { status: 'ok', message: "Pa'ar Mission Worker v4 🚀" };
       }
