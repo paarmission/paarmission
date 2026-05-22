@@ -110,34 +110,6 @@
     </a>
   </div>
 
-  <!-- ============ 이미지 뷰어 모달 (notion-v4.js 공용) ============ -->
-  <div id="letterModal" class="letter-modal" role="dialog" aria-modal="true">
-    <div class="letter-modal-backdrop" onclick="closeLetterModal()"></div>
-    <div class="letter-modal-box">
-      <div class="letter-modal-header">
-        <h4 id="letterModalTitle">내용 보기</h4>
-        <button class="letter-modal-close" onclick="closeLetterModal()" aria-label="닫기">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <div class="letter-modal-viewer">
-        <button class="letter-nav letter-nav--prev" id="letterPrev" onclick="changeLetterPage(-1)" aria-label="이전">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <div class="letter-modal-img-wrap" id="letterModalImgWrap">
-          <img id="letterModalImg" src="" alt="" />
-        </div>
-        <button class="letter-nav letter-nav--next" id="letterNext" onclick="changeLetterPage(1)" aria-label="다음">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-      </div>
-      <div class="letter-modal-footer">
-        <span id="letterPageInfo" class="letter-page-info"></span>
-        <div class="letter-thumbs" id="letterThumbs"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="container">
@@ -181,7 +153,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/notion-v4.js"></script>
   <script src="js/notion-partners.js"></script>
 </body>
 </html>

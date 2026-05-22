@@ -2868,23 +2868,31 @@ p  { color: var(--color-text); }
   opacity: 1;
 }
 
-/* ── 내용 보기 버튼 ──────────────────────────────────────── */
+/* ── 카드 하단 액션 영역 ──────────────────────────────────── */
+.partner-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* ── Notion 보기 버튼 ────────────────────────────────────── */
 .partner-view-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  margin-top: auto;
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: var(--radius-sm);
   background: rgba(207,167,66,.12);
   color: var(--color-accent-dark);
   font-size: .82rem;
   font-weight: 600;
   font-family: var(--font-sans);
-  cursor: pointer;
   border: 1px solid rgba(207,167,66,.25);
-  transition: background var(--transition), color var(--transition);
-  align-self: flex-start;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  text-decoration: none;
 }
 .partner-view-btn:hover {
   background: var(--color-accent);

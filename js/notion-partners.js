@@ -1,10 +1,7 @@
 /* ============================================================
    Pa'ar Mission — 협력단체 Notion 연동
    Worker URL: https://dark-pine-8ced.superddj00.workers.dev/
-   엔드포인트:
-     /partners-church      → 협력 교회 & 단체
-     /partners-missionary  → 협력 선교사
-     /partners-company     → 협력 기업
+   클릭 시 → Notion 페이지 새 탭으로 열기
    ============================================================ */
 
 (function () {
@@ -44,26 +41,27 @@
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function escAttr(str) {
-    return String(str).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  /* ── Notion 페이지 URL 생성 ─────────────────────────────────
+     page.url 이 있으면 그대로, 없으면 ID로 조합                  */
+  function notionUrl(page) {
+    if (page.url) return page.url;
+    const id = page.id.replace(/-/g, '');
+    return 'https://www.notion.so/' + id;
   }
 
   /* ── 썸네일 URL 결정 ────────────────────────────────────────
-     우선순위: 1) Worker _thumbnail  2) cover  3) files 속성  4) null  */
+     우선순위: 1) Worker _thumbnail  2) cover  3) files 속성      */
   function resolveThumbnail(page, logoPropVal) {
-    /* Worker가 내려준 첫 이미지 썸네일 */
     if (page._thumbnail) {
       return page._thumbnail.startsWith('http')
         ? page._thumbnail
         : WORKER + page._thumbnail;
     }
-    /* Notion 커버 이미지 */
     const cover = page.cover;
     if (cover) {
       if (cover.type === 'external' && cover.external?.url) return cover.external.url;
       if (cover.type === 'file'     && cover.file?.url)     return cover.file.url;
     }
-    /* 속성에서 파일/이미지 */
     if (logoPropVal) return logoPropVal;
     return null;
   }
@@ -95,11 +93,21 @@
     </div>`;
   }
 
-  /* ── 카드 클릭 핸들러 속성 ──────────────────────────────────
-     notionOpenModal 은 notion-v4.js 에서 전역으로 노출됨           */
-  function clickAttr(pageId, name) {
-    return `onclick="if(window.notionOpenModal)notionOpenModal('${escAttr(pageId)}','${escAttr(name)}')"
-            style="cursor:pointer;"`;
+  /* ── 썸네일 영역 HTML ───────────────────────────────────────── */
+  function thumbHtml(thumb, placeholderIcon, url) {
+    const inner = thumb
+      ? `<img src="${esc(thumb)}" loading="lazy" />`
+      : `<div class="partner-logo-placeholder"><i class="fa-solid fa-${placeholderIcon}"></i></div>`;
+    return `
+      <a class="partner-card-thumb${thumb ? ' partner-card-thumb--img' : ''}"
+         href="${esc(url)}" target="_blank" rel="noopener noreferrer"
+         aria-label="Notion 페이지 열기">
+        ${inner}
+        <div class="partner-card-overlay">
+          <i class="fa-brands fa-notion" style="font-size:1.6rem;"></i>
+          <span>Notion에서 보기</span>
+        </div>
+      </a>`;
   }
 
   /* ── 교회/단체 카드 ─────────────────────────────────────────── */
@@ -110,67 +118,47 @@
     const type   = prop(p, '유형') || prop(p, '종류') || prop(p, 'Type') || '';
     const desc   = prop(p, '소개') || prop(p, '설명') || prop(p, 'Description') || '';
     const link   = prop(p, '링크') || prop(p, 'URL') || prop(p, 'Website') || '';
-    const logoProp = prop(p, '로고') || prop(p, 'Logo') || '';
-    const thumb  = resolveThumbnail(page, logoProp);
+    const thumb  = resolveThumbnail(page, prop(p, '로고') || prop(p, 'Logo') || '');
+    const nUrl   = notionUrl(page);
     const delay  = idx * 80;
-
-    /* 썸네일 영역: 이미지 있으면 꽉 채움, 없으면 아이콘 */
-    const thumbHtml = thumb
-      ? `<div class="partner-card-thumb partner-card-thumb--img" ${clickAttr(page.id, name)}>
-           <img src="${esc(thumb)}" alt="${esc(name)}" loading="lazy" />
-           <div class="partner-card-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i><span>내용 보기</span></div>
-         </div>`
-      : `<div class="partner-card-thumb" ${clickAttr(page.id, name)}>
-           <div class="partner-logo-placeholder"><i class="fa-solid fa-church"></i></div>
-           <div class="partner-card-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i><span>내용 보기</span></div>
-         </div>`;
 
     const tagHtml  = type   ? `<span class="partner-type-tag">${esc(type)}</span>` : '';
     const regHtml  = region ? `<span class="partner-region"><i class="fa-solid fa-location-dot"></i> ${esc(region)}</span>` : '';
     const descHtml = desc   ? `<p class="partner-desc">${esc(desc)}</p>` : '';
     const linkHtml = link
-      ? `<a href="${esc(link)}" target="_blank" rel="noopener" class="partner-link"
-            onclick="event.stopPropagation()">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> 바로가기</a>`
+      ? `<a href="${esc(link)}" target="_blank" rel="noopener" class="partner-link" onclick="event.stopPropagation()">
+           <i class="fa-solid fa-arrow-up-right-from-square"></i> 웹사이트
+         </a>`
       : '';
 
     return `
       <div class="partner-card" data-aos="fade-up" data-aos-delay="${delay}">
-        ${thumbHtml}
+        ${thumbHtml(thumb, 'church', nUrl)}
         <div class="partner-card-body">
           ${tagHtml}
           <h4 class="partner-name">${esc(name)}</h4>
           ${regHtml}
           ${descHtml}
-          ${linkHtml}
-          <button class="partner-view-btn" ${clickAttr(page.id, name)}>
-            <i class="fa-solid fa-book-open"></i> 내용 보기
-          </button>
+          <div class="partner-card-actions">
+            ${linkHtml}
+            <a href="${esc(nUrl)}" target="_blank" rel="noopener" class="partner-view-btn">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> 자세히 보기
+            </a>
+          </div>
         </div>
       </div>`;
   }
 
   /* ── 선교사 카드 ───────────────────────────────────────────── */
   function missionaryCard(page, idx) {
-    const p       = page.properties;
-    const name    = titleProp(p);
-    const field   = prop(p, '사역지') || prop(p, '지역') || prop(p, 'Field') || '';
-    const org     = prop(p, '소속') || prop(p, '단체') || prop(p, 'Organization') || '';
-    const desc    = prop(p, '소개') || prop(p, '설명') || prop(p, 'Description') || '';
-    const photoProp = prop(p, '사진') || prop(p, 'Photo') || '';
-    const thumb   = resolveThumbnail(page, photoProp);
-    const delay   = idx * 80;
-
-    /* 사진 영역 */
-    const photoHtml = thumb
-      ? `<div class="partner-card-photo" ${clickAttr(page.id, name)}>
-           <img src="${esc(thumb)}" alt="${esc(name)}" loading="lazy" />
-           <div class="partner-card-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i><span>내용 보기</span></div>
-         </div>`
-      : `<div class="partner-card-photo partner-card-photo--empty" ${clickAttr(page.id, name)}>
-           <div class="partner-logo-placeholder partner-logo-placeholder--person"><i class="fa-solid fa-user"></i></div>
-           <div class="partner-card-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i><span>내용 보기</span></div>
-         </div>`;
+    const p      = page.properties;
+    const name   = titleProp(p);
+    const field  = prop(p, '사역지') || prop(p, '지역') || prop(p, 'Field') || '';
+    const org    = prop(p, '소속') || prop(p, '단체') || prop(p, 'Organization') || '';
+    const desc   = prop(p, '소개') || prop(p, '설명') || prop(p, 'Description') || '';
+    const thumb  = resolveThumbnail(page, prop(p, '사진') || prop(p, 'Photo') || '');
+    const nUrl   = notionUrl(page);
+    const delay  = idx * 80;
 
     const fieldHtml = field ? `<span class="partner-region"><i class="fa-solid fa-globe"></i> ${esc(field)}</span>` : '';
     const orgHtml   = org   ? `<span class="partner-org"><i class="fa-solid fa-building"></i> ${esc(org)}</span>` : '';
@@ -178,15 +166,17 @@
 
     return `
       <div class="partner-card partner-card--person" data-aos="fade-up" data-aos-delay="${delay}">
-        ${photoHtml}
+        ${thumbHtml(thumb, 'user', nUrl)}
         <div class="partner-card-body">
           <h4 class="partner-name">${esc(name)}</h4>
           ${fieldHtml}
           ${orgHtml}
           ${descHtml}
-          <button class="partner-view-btn" ${clickAttr(page.id, name)}>
-            <i class="fa-solid fa-book-open"></i> 내용 보기
-          </button>
+          <div class="partner-card-actions">
+            <a href="${esc(nUrl)}" target="_blank" rel="noopener" class="partner-view-btn">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> 자세히 보기
+            </a>
+          </div>
         </div>
       </div>`;
   }
@@ -198,39 +188,31 @@
     const sector = prop(p, '업종') || prop(p, '분야') || prop(p, 'Sector') || '';
     const desc   = prop(p, '소개') || prop(p, '설명') || prop(p, 'Description') || '';
     const link   = prop(p, '링크') || prop(p, 'URL') || prop(p, 'Website') || '';
-    const logoProp = prop(p, '로고') || prop(p, 'Logo') || '';
-    const thumb  = resolveThumbnail(page, logoProp);
+    const thumb  = resolveThumbnail(page, prop(p, '로고') || prop(p, 'Logo') || '');
+    const nUrl   = notionUrl(page);
     const delay  = idx * 80;
-
-    const thumbHtml = thumb
-      ? `<div class="partner-card-thumb partner-card-thumb--img" ${clickAttr(page.id, name)}>
-           <img src="${esc(thumb)}" alt="${esc(name)}" loading="lazy" />
-           <div class="partner-card-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i><span>내용 보기</span></div>
-         </div>`
-      : `<div class="partner-card-thumb" ${clickAttr(page.id, name)}>
-           <div class="partner-logo-placeholder"><i class="fa-solid fa-building-columns"></i></div>
-           <div class="partner-card-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i><span>내용 보기</span></div>
-         </div>`;
 
     const secHtml  = sector ? `<span class="partner-type-tag partner-type-tag--company">${esc(sector)}</span>` : '';
     const descHtml = desc   ? `<p class="partner-desc">${esc(desc)}</p>` : '';
     const linkHtml = link
-      ? `<a href="${esc(link)}" target="_blank" rel="noopener" class="partner-link"
-            onclick="event.stopPropagation()">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> 바로가기</a>`
+      ? `<a href="${esc(link)}" target="_blank" rel="noopener" class="partner-link" onclick="event.stopPropagation()">
+           <i class="fa-solid fa-arrow-up-right-from-square"></i> 웹사이트
+         </a>`
       : '';
 
     return `
       <div class="partner-card" data-aos="fade-up" data-aos-delay="${delay}">
-        ${thumbHtml}
+        ${thumbHtml(thumb, 'building-columns', nUrl)}
         <div class="partner-card-body">
           ${secHtml}
           <h4 class="partner-name">${esc(name)}</h4>
           ${descHtml}
-          ${linkHtml}
-          <button class="partner-view-btn" ${clickAttr(page.id, name)}>
-            <i class="fa-solid fa-book-open"></i> 내용 보기
-          </button>
+          <div class="partner-card-actions">
+            ${linkHtml}
+            <a href="${esc(nUrl)}" target="_blank" rel="noopener" class="partner-view-btn">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> 자세히 보기
+            </a>
+          </div>
         </div>
       </div>`;
   }

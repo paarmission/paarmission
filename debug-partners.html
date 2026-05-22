@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Worker 응답 디버그</title>
+  <style>
+    body { font-family: monospace; padding: 24px; background: #f5f5f5; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 8px; overflow: auto; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 400px; }
+    h2 { margin-top: 32px; color: #333; }
+    .ok  { background: #d4edda; color: #155724; padding: 6px 14px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
+    .err { background: #f8d7da; color: #721c24; padding: 6px 14px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Worker 응답 디버그</h1>
+  <p>확인 중... (콘솔도 함께 확인해 주세요)</p>
+
+  <h2>협력 선교사 (/partners-missionary)</h2>
+  <div id="s1">대기중...</div>
+  <pre id="p1">-</pre>
+
+  <h2>협력 기업 (/partners-company)</h2>
+  <div id="s2">대기중...</div>
+  <pre id="p2">-</pre>
+
+<script>
+const W = 'https://dark-pine-8ced.superddj00.workers.dev';
+
+function show(statusId, preId, data) {
+  const pages = (data && data.results) || [];
+  document.getElementById(statusId).className = 'ok';
+  document.getElementById(statusId).textContent = '✅ ' + pages.length + '개';
+
+  if (!pages.length) {
+    document.getElementById(preId).textContent = '결과 없음';
+    return;
+  }
+  const p = pages[0];
+  const out = {
+    id: p.id,
+    _thumbnail: p._thumbnail || null,
+    cover: p.cover ? {type: p.cover.type, url: p.cover.type==='external' ? p.cover.external?.url : p.cover.file?.url} : null,
+    prop_keys: Object.keys(p.properties || {})
+  };
+  document.getElementById(preId).textContent = JSON.stringify(out, null, 2);
+  console.log('[DEBUG] ' + statusId, out);
+}
+
+function fail(statusId, preId, err) {
+  document.getElementById(statusId).className = 'err';
+  document.getElementById(statusId).textContent = '❌ ' + err;
+  document.getElementById(preId).textContent = err;
+}
+
+fetch(W + '/partners-missionary')
+  .then(r => r.json())
+  .then(d => show('s1','p1',d))
+  .catch(e => fail('s1','p1',e.message));
+
+fetch(W + '/partners-company')
+  .then(r => r.json())
+  .then(d => show('s2','p2',d))
+  .catch(e => fail('s2','p2',e.message));
+</script>
+</body>
+</html>
