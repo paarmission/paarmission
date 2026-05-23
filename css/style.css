@@ -1671,7 +1671,7 @@ p  { color: var(--color-text); }
 /* 반응형 */
 @media (max-width: 900px) {
   .danggil-header { grid-template-columns: 1fr; }
-  .danggil-logo-wrap { max-width: 180px; }
+  .danggil-logo-wrap { max-width: 180px; margin: 0 auto; }
   .danggil-cards { grid-template-columns: 1fr; gap: 14px; }
   .danggil-footer-row { grid-template-columns: 1fr; text-align: center; }
   .danggil-meaning h4 { justify-content: center; }
