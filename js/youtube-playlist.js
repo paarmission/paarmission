@@ -157,18 +157,32 @@
 
   // ── 동적 카드에 클릭 이벤트 재바인딩 ──────────────────────
   function bindVideoCards() {
-    // main.js의 openYtModal 함수가 로드된 후 사용
     document.querySelectorAll('.sm-video-card').forEach(card => {
-      // 이미 바인딩 방지
       if (card.dataset.bound) return;
       card.dataset.bound = 'true';
-      card.addEventListener('click', () => {
+
+      // 모바일: 터치 이벤트로 유튜브 앱/새 탭 열기
+      // PC: openYtModal 모달로 열기
+      const handler = () => {
         const vid   = card.dataset.vid;
         const title = card.dataset.title;
-        if (vid && typeof openYtModal === 'function') {
+        if (!vid) return;
+
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.open(`https://www.youtube.com/watch?v=${vid}`, '_blank');
+        } else if (typeof openYtModal === 'function') {
           openYtModal(vid, title);
+        } else {
+          window.open(`https://www.youtube.com/watch?v=${vid}`, '_blank');
         }
-      });
+      };
+
+      card.addEventListener('click', handler);
+      card.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        handler();
+      }, { passive: false });
     });
   }
 
