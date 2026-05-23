@@ -1,11 +1,15 @@
 /* ============================================================
    Pa'ar Mission — YouTube 재생목록 자동 로딩
    재생목록에 영상 추가 시 자동으로 사이트에 반영됩니다.
+
+   ⚠️ YouTube API는 Cloudflare Worker를 통해 프록시 호출합니다.
+      → www.paarmission.org / paarmission.org 모두 정상 동작
+      → API 키 HTTP Referer 도메인 제한 우회
    ============================================================ */
 
 (function () {
-  const API_KEY     = 'AIzaSyBywI91_H6xejYjNX002Dr6cvHnFyIHPOk';
-  const PLAYLIST_ID = 'PLv-gSMPr9CVVq8qxZLXBPC2Obdp9Jzu9-';
+  // Worker 프록시 URL (도메인 무관하게 동작)
+  const WORKER_URL  = 'https://paarmission.jonathanso.workers.dev';
 
   // ── 스핀오프 판별 함수 ──────────────────────────────────────
   // 제목에 "Spin" 또는 "spin" 또는 "스핀" 이 포함되면 스핀오프
@@ -77,18 +81,16 @@
       </div>`;
   }
 
-  // ── 전체 재생목록 가져오기 (페이지네이션 처리) ───────────────
+  // ── 전체 재생목록 가져오기 (Worker 프록시 경유, 페이지네이션 처리) ─
   async function fetchPlaylist() {
     let items = [], pageToken = '';
     do {
-      const url =
-        `https://www.googleapis.com/youtube/v3/playlistItems` +
-        `?part=snippet&maxResults=50` +
-        `&playlistId=${PLAYLIST_ID}` +
-        `&key=${API_KEY}` +
-        (pageToken ? `&pageToken=${pageToken}` : '');
+      // Cloudflare Worker를 통해 호출 → API 키 도메인 제한 우회
+      const proxyUrl =
+        `${WORKER_URL}/youtube-playlist` +
+        (pageToken ? `?pageToken=${encodeURIComponent(pageToken)}` : '');
 
-      const res  = await fetch(url);
+      const res  = await fetch(proxyUrl);
       const data = await res.json();
 
       if (data.error) throw new Error(data.error.message);

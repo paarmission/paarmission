@@ -30,6 +30,9 @@
 - 재생목록 ID: `PLv-gSMPr9CVVq8qxZLXBPC2Obdp9Jzu9-`
 - 제목 패턴(`/spin\s*off|스핀/i`)으로 에피소드 / 스핀오프 자동 분류
 - `js/youtube-playlist.js` — 스켈레톤 로딩 + 에러 처리
+- **YouTube API 호출 → Cloudflare Worker 프록시 경유** (`/youtube-playlist`)
+  - `www.paarmission.org` / `paarmission.org` 모두 정상 동작
+  - API 키 HTTP Referer 도메인 제한 완전 우회
 
 ### 협력단체 Notion 연동 (완료 — Worker 배포 필요)
 - Cloudflare Worker 3개 엔드포인트 추가 (`worker-code.js`)
@@ -72,6 +75,7 @@
   - `GET /partners-company` — 협력 기업 DB 목록
   - `GET /blocks/:id` — 페이지 이미지 목록 (재귀 탐색)
   - `GET /img?url=` — AWS S3 이미지 CORS 프록시
+  - `GET /youtube-playlist?pageToken=` — **YouTube 재생목록 프록시** (API 키 도메인 제한 우회)
 
 ---
 
@@ -109,7 +113,7 @@ images/
 - [ ] **Cloudflare Worker 배포** — `worker-code.js`에 추가한 3개 엔드포인트(`/partners-church`, `/partners-missionary`, `/partners-company`) 실제 Worker에 배포 필요
 - [ ] `support.html` 계좌 정보 실제 계좌로 업데이트
 - [ ] `images/danggil-logo.png` 실제 이미지 업로드 (현재 fallback 아이콘)
-- [ ] YouTube API 키 도메인 제한: Genspark 미리보기에서는 403 (paarmission.org에서는 정상 동작)
+- [x] ~~YouTube API 키 도메인 제한~~ → **Worker 프록시로 해결** (`www.paarmission.org` 포함 모든 도메인 정상 동작)
 - [ ] `notion.js` 디버그 `console.log` 제거 (배포 전 정리 권장)
 
 ---

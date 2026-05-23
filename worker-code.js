@@ -4,8 +4,10 @@
  * ※ Service Worker 문법 (addEventListener 방식)
  */
 
-var NOTION_API_KEY = 'ntn_k86292911399zdoKzaCOSKhB2TKGlHKc3izS6mRDc4Z8PK';
-var NOTION_VERSION = '2022-06-28';
+var NOTION_API_KEY  = 'ntn_k86292911399zdoKzaCOSKhB2TKGlHKc3izS6mRDc4Z8PK';
+var NOTION_VERSION  = '2022-06-28';
+var YT_API_KEY      = 'AIzaSyBywI91_H6xejYjNX002Dr6cvHnFyIHPOk';
+var YT_PLAYLIST_ID  = 'PLv-gSMPr9CVVq8qxZLXBPC2Obdp9Jzu9-';
 
 var DB_PRAYER      = '36520258888380f49454ffa1be6f9701';
 var DB_THANKS      = '3652025888838074bd91f1ea74de92f9';
@@ -142,6 +144,27 @@ function handleRequest(request) {
       var h  = Object.assign({}, CORS_IMG_HEADERS, { 'Content-Type': ct });
       return new Response(imgRes.body, { status: imgRes.status, headers: h });
     });
+  }
+
+  /* YouTube 재생목록 프록시
+     /youtube-playlist?pageToken=... (선택)
+     브라우저 직접 호출 시 API 키 도메인 제한 우회 */
+  if (path === '/youtube-playlist') {
+    var pageToken = url.searchParams.get('pageToken') || '';
+    var ytUrl =
+      'https://www.googleapis.com/youtube/v3/playlistItems' +
+      '?part=snippet&maxResults=50' +
+      '&playlistId=' + YT_PLAYLIST_ID +
+      '&key=' + YT_API_KEY +
+      (pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : '');
+    return fetch(ytUrl)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        return new Response(JSON.stringify(data), { status: 200, headers: CORS_HEADERS });
+      })
+      .catch(function(err) {
+        return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: CORS_HEADERS });
+      });
   }
 
   var dataPromise;
