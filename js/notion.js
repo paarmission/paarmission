@@ -212,6 +212,8 @@ function _nmRenderImg() {
   var multi = _nm.pages.length > 1;
   if (prev) prev.style.visibility = multi ? 'visible' : 'hidden';
   if (next) next.style.visibility = multi ? 'visible' : 'hidden';
+  // 핀치 줌 바인딩
+  if (typeof _bindImgZoom === 'function') _bindImgZoom(wrap);
 }
 
 function _nmRenderThumbs() {

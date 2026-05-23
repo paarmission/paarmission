@@ -297,6 +297,92 @@ function _renderLetterPage() {
   const next = document.getElementById('letterNext');
   if (prev) prev.style.visibility = letterPages.length > 1 ? 'visible' : 'hidden';
   if (next) next.style.visibility = letterPages.length > 1 ? 'visible' : 'hidden';
+
+  // ── 핀치 줌 & 더블탭 확대 ──────────────────────────────
+  _bindImgZoom(wrap);
+}
+
+function _bindImgZoom(wrap) {
+  let scale = 1, startDist = 0, startScale = 1;
+  let translateX = 0, translateY = 0;
+  let lastTap = 0;
+  let isDragging = false, dragStartX = 0, dragStartY = 0, dragTX = 0, dragTY = 0;
+
+  function getImg() { return wrap.querySelector('img'); }
+
+  function applyTransform() {
+    const img = getImg();
+    if (!img) return;
+    img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+    img.style.transformOrigin = 'center center';
+    img.style.transition = 'none';
+  }
+
+  function resetTransform() {
+    scale = 1; translateX = 0; translateY = 0;
+    const img = getImg();
+    if (!img) return;
+    img.style.transform = '';
+    img.style.transition = 'transform .25s ease';
+  }
+
+  // 더블탭 확대/축소
+  wrap.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTap < 280) {
+      e.preventDefault();
+      if (scale > 1) { resetTransform(); }
+      else {
+        scale = 2.5; translateX = 0; translateY = 0;
+        const img = getImg();
+        if (img) {
+          img.style.transition = 'transform .25s ease';
+          img.style.transformOrigin = 'center center';
+          img.style.transform = `scale(${scale})`;
+        }
+      }
+    }
+    lastTap = now;
+  }, { passive: false });
+
+  // 핀치 줌
+  wrap.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      startDist = Math.hypot(dx, dy);
+      startScale = scale;
+    } else if (e.touches.length === 1 && scale > 1) {
+      // 확대 상태에서 드래그 이동
+      isDragging = true;
+      dragStartX = e.touches[0].clientX;
+      dragStartY = e.touches[0].clientY;
+      dragTX = translateX;
+      dragTY = translateY;
+    }
+  }, { passive: false });
+
+  wrap.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      scale = Math.min(Math.max(startScale * (dist / startDist), 1), 5);
+      applyTransform();
+    } else if (e.touches.length === 1 && isDragging && scale > 1) {
+      e.preventDefault();
+      translateX = dragTX + (e.touches[0].clientX - dragStartX) / scale;
+      translateY = dragTY + (e.touches[0].clientY - dragStartY) / scale;
+      applyTransform();
+    }
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', (e) => {
+    isDragging = false;
+    if (scale < 1.05) resetTransform();
+  }, { passive: true });
 }
 
 function _renderLetterThumbs() {
