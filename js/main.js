@@ -310,51 +310,42 @@ function _bindImgZoom(wrap) {
 
   function getImg() { return wrap.querySelector('img'); }
 
-  function applyTransform() {
+  function applyTransform(withTransition) {
     const img = getImg();
     if (!img) return;
-    img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+    img.style.transition = withTransition ? 'transform .25s ease' : 'none';
     img.style.transformOrigin = 'center center';
-    img.style.transition = 'none';
+    img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
   }
 
   function resetTransform() {
     scale = 1; translateX = 0; translateY = 0;
-    const img = getImg();
-    if (!img) return;
-    img.style.transform = '';
-    img.style.transition = 'transform .25s ease';
+    applyTransform(true);
   }
 
   // 더블탭 확대/축소
   wrap.addEventListener('touchend', (e) => {
+    if (e.touches.length > 0) return; // 아직 손가락 남아있으면 무시
     const now = Date.now();
-    if (now - lastTap < 280) {
+    const timeDiff = now - lastTap;
+    lastTap = now;
+    if (timeDiff < 280 && timeDiff > 0) {
       e.preventDefault();
       if (scale > 1) { resetTransform(); }
-      else {
-        scale = 2.5; translateX = 0; translateY = 0;
-        const img = getImg();
-        if (img) {
-          img.style.transition = 'transform .25s ease';
-          img.style.transformOrigin = 'center center';
-          img.style.transform = `scale(${scale})`;
-        }
-      }
+      else { scale = 2.5; translateX = 0; translateY = 0; applyTransform(true); }
     }
-    lastTap = now;
   }, { passive: false });
 
-  // 핀치 줌
+  // 핀치 줌 시작
   wrap.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
       e.preventDefault();
+      isDragging = false;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       startDist = Math.hypot(dx, dy);
       startScale = scale;
     } else if (e.touches.length === 1 && scale > 1) {
-      // 확대 상태에서 드래그 이동
       isDragging = true;
       dragStartX = e.touches[0].clientX;
       dragStartY = e.touches[0].clientY;
@@ -363,6 +354,7 @@ function _bindImgZoom(wrap) {
     }
   }, { passive: false });
 
+  // 핀치 줌 이동
   wrap.addEventListener('touchmove', (e) => {
     if (e.touches.length === 2) {
       e.preventDefault();
@@ -370,18 +362,19 @@ function _bindImgZoom(wrap) {
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       const dist = Math.hypot(dx, dy);
       scale = Math.min(Math.max(startScale * (dist / startDist), 1), 5);
-      applyTransform();
+      applyTransform(false);
     } else if (e.touches.length === 1 && isDragging && scale > 1) {
       e.preventDefault();
       translateX = dragTX + (e.touches[0].clientX - dragStartX) / scale;
       translateY = dragTY + (e.touches[0].clientY - dragStartY) / scale;
-      applyTransform();
+      applyTransform(false);
     }
   }, { passive: false });
 
+  // 핀치 줌 끝 — scale만 저장, 리셋 안 함
   wrap.addEventListener('touchend', (e) => {
     isDragging = false;
-    if (scale < 1.05) resetTransform();
+    if (scale < 1.05) { scale = 1; translateX = 0; translateY = 0; applyTransform(true); }
   }, { passive: true });
 }
 
