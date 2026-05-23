@@ -9,7 +9,7 @@
 
 (function () {
   // Worker 프록시 URL (도메인 무관하게 동작)
-  const WORKER_URL  = 'https://paarmission.jonathanso.workers.dev';
+  const WORKER_URL  = 'https://dark-pine-8ced.superddj00.workers.dev';
 
   // ── 스핀오프 판별 함수 ──────────────────────────────────────
   // 제목에 "Spin" 또는 "spin" 또는 "스핀" 이 포함되면 스핀오프
