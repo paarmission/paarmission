@@ -2750,12 +2750,26 @@ p  { color: var(--color-text); }
 
 /* 파트너 그리드 */
 .partners-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 24px;
+  justify-content: center;
 }
 .partners-grid--2 {
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
+/* 카드 너비 고정 */
+.partners-grid .partner-card,
+.partners-grid--2 .partner-card {
+  width: 280px;
+  flex: 0 0 280px;
+}
+.partners-grid--2 .partner-card {
+  width: 340px;
+  flex: 0 0 340px;
 }
 
 /* ── 기본 파트너 카드 ─────────────────────────────────────── */
