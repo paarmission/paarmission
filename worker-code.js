@@ -171,8 +171,11 @@ function handleRequest(request) {
   var dataPromise;
 
   if (path === '/notice') {
+    /* 목록 조회 후 각 페이지의 첫 번째 이미지 URL도 함께 첨부 */
     dataPromise = nPost('/databases/' + DB_NOTICE + '/query', {
       sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+    }).then(function(data) {
+      return withThumbnails(data);
     });
   } else if (path === '/prayer') {
     dataPromise = queryDB(DB_PRAYER).then(withThumbnails);
