@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>협력단체 | Pa'ar Mission</title>
-  <meta name="description" content="파아르미션과 함께 복음의 사역을 감당하는 협력 교회, 선교사, 기업을 소개합니다." />
-  <link rel="canonical" href="https://paarmission.org/partners.html" />
+  <title>공지사항 | Pa'ar Mission</title>
+  <meta name="description" content="파아르미션 공지사항 게시판 — 최신 소식과 중요 안내를 확인하세요." />
+  <link rel="canonical" href="https://paarmission.org/notice.html" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://paarmission.org/partners.html" />
-  <meta property="og:title" content="협력단체 | Pa'ar Mission" />
-  <meta property="og:description" content="파아르미션과 함께 복음의 사역을 감당하는 협력 교회, 선교사, 기업을 소개합니다." />
+  <meta property="og:url" content="https://paarmission.org/notice.html" />
+  <meta property="og:title" content="공지사항 | Pa'ar Mission" />
+  <meta property="og:description" content="파아르미션 공지사항 게시판 — 최신 소식과 중요 안내를 확인하세요." />
   <meta property="og:locale" content="ko_KR" />
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
@@ -34,82 +34,52 @@
           <li><a href="foundation.html">신학적 기초</a></li>
           <li><a href="values.html">핵심 가치</a></li>
           <li><a href="projects.html">주요 사역</a></li>
-          <li><a href="notice.html" class="nav-notice-link">공지사항</a></li>
+          <li><a href="notice.html" class="active nav-notice-link">공지사항</a></li>
           <li><a href="mission.html">단기선교</a></li>
           <li><a href="support.html">후원</a></li>
           <li><a href="contact.html">연락처</a></li>
-          <li><a href="partners.html" class="active">협력단체</a></li>
+          <li><a href="partners.html">협력단체</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <!-- ============ PAGE HERO ============ -->
-  <section class="page-hero">
-    <div class="container page-hero-inner" data-aos="fade-up" data-aos-duration="900">
-      <span class="page-hero-tag"><i class="fa-solid fa-handshake"></i> Partners</span>
-      <h1 class="page-hero-title">협력단체</h1>
-      <p class="page-hero-desc">파아르미션과 함께 복음의 사역을 감당하는<br />교회, 선교사, 기업을 소개합니다.</p>
+  <section class="page-hero notice-hero">
+    <div class="page-hero-overlay"></div>
+    <div class="container page-hero-content" data-aos="fade-up">
+      <span class="section-tag" style="margin-bottom:16px;">Notice</span>
+      <h1 class="page-hero-title">공지사항</h1>
+      <p class="page-hero-desc">
+        파아르미션의 최신 소식과 중요 안내를 전달합니다.
+      </p>
     </div>
   </section>
 
-  <!-- ============ 협력 교회 & 단체 ============ -->
-  <section id="partners-church" class="partners-section section">
+  <!-- ============ NOTICE BOARD ============ -->
+  <section class="section notice-section">
     <div class="container">
-      <div class="section-header" data-aos="fade-up">
-        <span class="section-tag">Church &amp; Organization</span>
-        <h2 class="section-title">협력 교회 &amp; 단체</h2>
-        <p class="section-desc">
-          파아르미션과 동역하며 하나님 나라의 확장을 위해 함께 헌신하는 교회와 단체입니다.
-        </p>
+
+      <!-- 필터 탭 -->
+      <div class="notice-filter-bar" data-aos="fade-up">
+        <button class="notice-filter-btn active" data-filter="all">
+          <i class="fa-solid fa-list"></i> 전체
+        </button>
+        <button class="notice-filter-btn" data-filter="중요">
+          <i class="fa-solid fa-circle-exclamation"></i> 중요
+        </button>
+        <button class="notice-filter-btn" data-filter="공지사항">
+          <i class="fa-solid fa-circle-info"></i> 공지사항
+        </button>
       </div>
-      <div class="partners-grid" id="partners-church-grid">
-        <!-- notion-partners.js 로 동적 렌더링 -->
+
+      <!-- 공지 목록 -->
+      <div id="notice-list" class="notice-list" aria-live="polite">
+        <!-- JS로 렌더링 (스켈레톤 → 실제 카드) -->
       </div>
+
     </div>
   </section>
-
-  <!-- ============ 협력 선교사 ============ -->
-  <section id="partners-missionary" class="partners-section section">
-    <div class="container">
-      <div class="section-header" data-aos="fade-up">
-        <span class="section-tag">Missionary</span>
-        <h2 class="section-title">협력 선교사</h2>
-        <p class="section-desc">
-          파아르미션과 함께 현지에서 복음을 전하며 사역하고 있는 선교사들입니다.
-        </p>
-      </div>
-      <div class="partners-grid partners-grid--2" id="partners-missionary-grid">
-        <!-- notion-partners.js 로 동적 렌더링 -->
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ 협력 기업 ============ -->
-  <section id="partners-company" class="partners-section section">
-    <div class="container">
-      <div class="section-header" data-aos="fade-up">
-        <span class="section-tag">Company</span>
-        <h2 class="section-title">협력 기업</h2>
-        <p class="section-desc">
-          사역의 실제적 필요를 함께 감당하며 파아르미션을 지원하는 협력 기업입니다.
-        </p>
-      </div>
-      <div class="partners-grid" id="partners-company-grid">
-        <!-- notion-partners.js 로 동적 렌더링 -->
-      </div>
-    </div>
-  </section>
-
-  <!-- Page Navigation -->
-  <div class="page-nav-section">
-    <a href="contact.html" class="page-nav-btn page-nav-btn--prev">
-      <i class="fa-solid fa-chevron-left"></i> 연락처
-    </a>
-    <a href="index.html" class="page-nav-btn page-nav-btn--next">
-      홈으로 <i class="fa-solid fa-chevron-right"></i>
-    </a>
-  </div>
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
@@ -154,7 +124,50 @@
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script src="js/main.js?v=2"></script>
-  <script src="js/notion-partners.js?v=5"></script>
+  <script src="js/main.js"></script>
+  <script src="js/notion-notice.js"></script>
+
+  <!-- 필터 탭 동작 -->
+  <script>
+  (function () {
+    var filterBtns = document.querySelectorAll('.notice-filter-btn');
+    var currentFilter = 'all';
+
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        filterBtns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
+        applyFilter(currentFilter);
+      });
+    });
+
+    function applyFilter(filter) {
+      var cards = document.querySelectorAll('.notice-card');
+      cards.forEach(function (card) {
+        if (filter === 'all') {
+          card.style.display = '';
+        } else {
+          var tag = card.querySelector('.notice-tag');
+          var tagText = tag ? tag.textContent.trim() : '';
+          if (tagText.indexOf(filter) !== -1) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    /* notice-list 변경 감지 (JS 렌더 후 필터 재적용) */
+    var listEl = document.getElementById('notice-list');
+    if (listEl && typeof MutationObserver !== 'undefined') {
+      var observer = new MutationObserver(function () {
+        if (currentFilter !== 'all') applyFilter(currentFilter);
+      });
+      observer.observe(listEl, { childList: true });
+    }
+  })();
+  </script>
 </body>
 </html>

@@ -14,6 +14,7 @@ var DB_THANKS      = '3652025888838074bd91f1ea74de92f9';
 var DB_CHURCH      = '36820258888380188fe3c24f7a17a818';
 var DB_MISSIONARY  = '368202588883805a91b8cb13197ac380';
 var DB_COMPANY     = '3682025888838026a2a2db6dd0be801b';
+var DB_NOTICE      = '36a202588883804c8a87c4746ac57632';  /* Pa'ar Notice DB ID */
 
 var CORS_HEADERS = {
   'Access-Control-Allow-Origin' : '*',
@@ -169,7 +170,11 @@ function handleRequest(request) {
 
   var dataPromise;
 
-  if (path === '/prayer') {
+  if (path === '/notice') {
+    dataPromise = nPost('/databases/' + DB_NOTICE + '/query', {
+      sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+    });
+  } else if (path === '/prayer') {
     dataPromise = queryDB(DB_PRAYER).then(withThumbnails);
   } else if (path === '/thanks') {
     dataPromise = queryDB(DB_THANKS).then(withThumbnails);
