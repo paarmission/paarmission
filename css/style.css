@@ -3601,6 +3601,21 @@ body.popup-open { overflow: hidden; }
 }
 .np-close:hover { background: rgba(255,255,255,.38); }
 
+/* 1:1 이미지 영역 */
+.np-img-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--color-bg-alt);
+  display: none; /* JS에서 이미지 로드 후 block으로 전환 */
+}
+.np-img-wrap .np-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* 본문 영역 */
 .np-body {
   padding: 24px 28px 20px;

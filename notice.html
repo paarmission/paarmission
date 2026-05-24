@@ -60,19 +60,6 @@
   <section class="section notice-section">
     <div class="container">
 
-      <!-- 필터 탭 -->
-      <div class="notice-filter-bar" data-aos="fade-up">
-        <button class="notice-filter-btn active" data-filter="all">
-          <i class="fa-solid fa-list"></i> 전체
-        </button>
-        <button class="notice-filter-btn" data-filter="중요">
-          <i class="fa-solid fa-circle-exclamation"></i> 중요
-        </button>
-        <button class="notice-filter-btn" data-filter="공지사항">
-          <i class="fa-solid fa-circle-info"></i> 공지사항
-        </button>
-      </div>
-
       <!-- 공지 목록 -->
       <div id="notice-list" class="notice-list" aria-live="polite">
         <!-- JS로 렌더링 (스켈레톤 → 실제 카드) -->
@@ -127,47 +114,6 @@
   <script src="js/main.js"></script>
   <script src="js/notion-notice.js"></script>
 
-  <!-- 필터 탭 동작 -->
-  <script>
-  (function () {
-    var filterBtns = document.querySelectorAll('.notice-filter-btn');
-    var currentFilter = 'all';
 
-    filterBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        filterBtns.forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        currentFilter = btn.getAttribute('data-filter');
-        applyFilter(currentFilter);
-      });
-    });
-
-    function applyFilter(filter) {
-      var cards = document.querySelectorAll('.notice-card');
-      cards.forEach(function (card) {
-        if (filter === 'all') {
-          card.style.display = '';
-        } else {
-          var tag = card.querySelector('.notice-tag');
-          var tagText = tag ? tag.textContent.trim() : '';
-          if (tagText.indexOf(filter) !== -1) {
-            card.style.display = '';
-          } else {
-            card.style.display = 'none';
-          }
-        }
-      });
-    }
-
-    /* notice-list 변경 감지 (JS 렌더 후 필터 재적용) */
-    var listEl = document.getElementById('notice-list');
-    if (listEl && typeof MutationObserver !== 'undefined') {
-      var observer = new MutationObserver(function () {
-        if (currentFilter !== 'all') applyFilter(currentFilter);
-      });
-      observer.observe(listEl, { childList: true });
-    }
-  })();
-  </script>
 </body>
 </html>
