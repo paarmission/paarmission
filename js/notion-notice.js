@@ -118,48 +118,52 @@
     if (contentEl) contentEl.textContent = content;
     if (dateEl)    dateEl.textContent    = dateStr;
 
+    /* ── 관계형 '페이지' URL 미리 fetch (버튼 + 이미지 공용) ─── */
+    var relatedPageId = prop(item, '페이지');
+    var _notionUrl    = null;   /* fetch 완료 후 채워짐 */
+
+    function openNotionPage() {
+      var target = _notionUrl
+        || (relatedPageId ? 'https://www.notion.so/' + relatedPageId.replace(/-/g, '') : 'notice.html');
+      if (relatedPageId) {
+        window.open(target, '_blank');
+      } else {
+        window.location.href = target;
+      }
+    }
+
+    if (relatedPageId) {
+      getNotionPageUrl(relatedPageId).then(function (url) {
+        _notionUrl = url;
+      });
+    }
+
     /* ── 이미지: Worker가 _thumbnail 로 첨부한 프록시 URL 사용 ── */
     if (imgWrap) {
       var thumbSrc = item._thumbnail || null;
       if (thumbSrc) {
         var img = document.createElement('img');
-        img.alt     = title;
+        img.alt       = title;
         img.className = 'np-img';
-        /* 프록시 URL이므로 WORKER_URL 앞에 붙여야 함 */
         img.src = thumbSrc.indexOf('http') === 0
           ? thumbSrc
           : WORKER_URL + thumbSrc;
-        img.onerror = function () {
-          imgWrap.style.display = 'none';
-        };
-        img.onload = function () {
-          imgWrap.style.display = 'block';
-        };
+        img.onerror = function () { imgWrap.style.display = 'none'; };
+        img.onload  = function () { imgWrap.style.display = 'block'; };
         imgWrap.innerHTML = '';
         imgWrap.appendChild(img);
+
+        /* 이미지 클릭 → Notion 페이지로 이동 (버튼과 동일) */
+        imgWrap.style.cursor = 'pointer';
+        imgWrap.addEventListener('click', function () { openNotionPage(); });
       } else {
         imgWrap.style.display = 'none';
       }
     }
 
-    /* ── "더 보기" 버튼 → 관계형 '페이지' 속성으로 이동 ─────── */
-    var relatedPageId = prop(item, '페이지');
+    /* ── "더 보기" 버튼 → 동일한 openNotionPage() 호출 ─────── */
     if (moreBtn) {
-      if (relatedPageId) {
-        /* 관계형 페이지 URL 미리 fetch */
-        getNotionPageUrl(relatedPageId).then(function (url) {
-          moreBtn._notionUrl = url;
-        });
-        moreBtn.addEventListener('click', function () {
-          var target = moreBtn._notionUrl || ('https://www.notion.so/' + relatedPageId.replace(/-/g, ''));
-          window.open(target, '_blank');
-        });
-      } else {
-        /* 관계형 페이지 없으면 notice.html 게시판으로 */
-        moreBtn.addEventListener('click', function () {
-          window.location.href = 'notice.html';
-        });
-      }
+      moreBtn.addEventListener('click', function () { openNotionPage(); });
     }
 
     /* 팝업 표시 */
