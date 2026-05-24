@@ -61,6 +61,13 @@
       .then(function (r) {
         if (!r.ok) throw new Error('Worker /notice 응답 오류: ' + r.status);
         return r.json();
+      })
+      .then(function (data) {
+        /* 방어 필터: Worker 필터를 통과했더라도 '공지구분'이 없는 항목 제거 */
+        var results = (data.results || []).filter(function (n) {
+          return !!prop(n, '공지구분');
+        });
+        return Object.assign({}, data, { results: results });
       });
   }
 

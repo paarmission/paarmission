@@ -171,8 +171,13 @@ function handleRequest(request) {
   var dataPromise;
 
   if (path === '/notice') {
-    /* 목록 조회 후 각 페이지의 첫 번째 이미지 URL도 함께 첨부 */
+    /* '공지구분' 속성이 선택된 항목만 조회
+       (비어 있으면 홈페이지에 노출하지 않음)            */
     dataPromise = nPost('/databases/' + DB_NOTICE + '/query', {
+      filter: {
+        property: '공지구분',
+        select: { is_not_empty: true },
+      },
       sorts: [{ timestamp: 'created_time', direction: 'descending' }],
     }).then(function(data) {
       return withThumbnails(data);
