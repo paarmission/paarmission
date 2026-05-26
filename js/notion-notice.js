@@ -152,9 +152,11 @@
       }
     }
 
-    /* ── "더 보기" 버튼 → 동일한 openNotionPage() 호출 ─────── */
+    /* ── "더 보기" 버튼 → 항상 공지사항 페이지로 이동 ─────── */
     if (moreBtn) {
-      moreBtn.addEventListener('click', function () { openNotionPage(); });
+      moreBtn.addEventListener('click', function () {
+        window.location.href = 'notice.html';
+      });
     }
 
     /* 팝업 표시 */
