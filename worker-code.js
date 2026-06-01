@@ -21,10 +21,11 @@ var CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Content-Type'                : 'application/json; charset=utf-8',
+  'Cache-Control'               : 'no-cache, no-store, must-revalidate',
 };
 var CORS_IMG_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Cache-Control'              : 'public, max-age=3600',
+  'Cache-Control'              : 'no-cache, no-store, must-revalidate',
 };
 
 /* ── Notion API 헬퍼 ─────────────────────────────────────── */

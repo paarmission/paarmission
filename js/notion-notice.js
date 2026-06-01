@@ -57,7 +57,8 @@
 
   /* ── Notion API 호출 ───────────────────────────────────────── */
   function fetchNotices() {
-    return fetch(WORKER_URL + '/notice')
+    /* cache: 'no-store' → 항상 최신 썸네일 URL을 Notion에서 새로 받아옴 */
+    return fetch(WORKER_URL + '/notice', { cache: 'no-store' })
       .then(function (r) {
         if (!r.ok) throw new Error('Worker /notice 응답 오류: ' + r.status);
         return r.json();
