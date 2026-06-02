@@ -168,7 +168,8 @@
 
         newItems.forEach(function (n) {
           var nTitle = prop(n, '이름') || prop(n, 'Name') || prop(n, '제목') || '(제목 없음)';
-          var nUrl   = resolveTargetUrl(n);
+          /* Notion 글 자체 URL 사용 (public_url 우선, 없으면 url) */
+          var nUrl   = n.public_url || n.url || null;
 
           var link = document.createElement('a');
           link.className = 'np-new-item';
