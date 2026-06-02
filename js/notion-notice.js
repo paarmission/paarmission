@@ -149,6 +149,41 @@
       imgWrap.addEventListener('click', function () { openNotionPage(); });
     }
 
+    /* ── NEW 공지 목록 렌더 ─────────────────────────────────── */
+    var newListEl = document.getElementById('np-new-list');
+    if (newListEl) {
+      var newItems = notices.filter(function (n) {
+        return prop(n, '공지구분') === 'NEW';
+      });
+      /* 최신순 정렬 */
+      newItems.sort(function (a, b) {
+        return new Date(b.created_time) - new Date(a.created_time);
+      });
+
+      if (newItems.length > 0) {
+        var divider = document.createElement('div');
+        divider.className = 'np-new-divider';
+        divider.textContent = '새 공지';
+        newListEl.appendChild(divider);
+
+        newItems.forEach(function (n) {
+          var nTitle = prop(n, '이름') || prop(n, 'Name') || prop(n, '제목') || '(제목 없음)';
+          var nUrl   = resolveTargetUrl(n);
+
+          var link = document.createElement('a');
+          link.className = 'np-new-item';
+          link.href      = nUrl || 'notice.html';
+          link.target    = nUrl ? '_blank' : '_self';
+          link.rel       = 'noopener noreferrer';
+          link.innerHTML =
+            '<span class="np-new-badge">NEW</span>' +
+            '<span class="np-new-title">' + _esc(nTitle) + '</span>' +
+            '<span class="np-new-arrow"><i class="fa-solid fa-chevron-right"></i></span>';
+          newListEl.appendChild(link);
+        });
+      }
+    }
+
     /* ── "더 보기" 버튼 → 항상 공지사항 페이지로 이동 ─────── */
     if (moreBtn) {
       moreBtn.addEventListener('click', function () {
