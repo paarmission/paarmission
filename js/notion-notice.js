@@ -130,27 +130,23 @@
       }
     }
 
-    /* ── 이미지: Worker가 _thumbnail 로 첨부한 프록시 URL 사용 ── */
+    /* ── 이미지: /thumb/{pageId} → Worker가 실시간으로 최신 이미지 프록시 ── */
     if (imgWrap) {
-      var thumbSrc = item._thumbnail || null;
-      if (thumbSrc) {
-        var img = document.createElement('img');
-        img.alt       = title;
-        img.className = 'np-img';
-        img.src = thumbSrc.indexOf('http') === 0
-          ? thumbSrc
-          : WORKER_URL + thumbSrc;
-        img.onerror = function () { imgWrap.style.display = 'none'; };
-        img.onload  = function () { imgWrap.style.display = 'block'; };
-        imgWrap.innerHTML = '';
-        imgWrap.appendChild(img);
+      /* _thumbnail = '/thumb/{pageId}' 형태, 항상 WORKER_URL 붙여서 사용 */
+      var thumbSrc = WORKER_URL + '/thumb/' + item.id;
+      var img = document.createElement('img');
+      img.alt       = title;
+      img.className = 'np-img';
+      img.src       = thumbSrc;
+      img.onerror   = function () { imgWrap.style.display = 'none'; };
+      img.onload    = function () { imgWrap.style.display = 'block'; };
+      imgWrap.style.display = 'none'; /* 로드 전 숨김 */
+      imgWrap.innerHTML = '';
+      imgWrap.appendChild(img);
 
-        /* 이미지 클릭 → URL 속성값으로 이동 (버튼과 동일) */
-        imgWrap.style.cursor = 'pointer';
-        imgWrap.addEventListener('click', function () { openNotionPage(); });
-      } else {
-        imgWrap.style.display = 'none';
-      }
+      /* 이미지 클릭 → URL 속성값으로 이동 */
+      imgWrap.style.cursor = 'pointer';
+      imgWrap.addEventListener('click', function () { openNotionPage(); });
     }
 
     /* ── "더 보기" 버튼 → 항상 공지사항 페이지로 이동 ─────── */

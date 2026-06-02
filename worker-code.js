@@ -67,19 +67,31 @@ function getBlocks(id) { return nGet('/blocks/' + id + '/children'); }
 function getPage(id)   { return nGet('/pages/' + id); }
 
 /* ── 첫 번째 이미지 추출 (썸네일용) ─────────────────────── */
+/* 우선순위: 1) 페이지 커버  2) 본문 첫 번째 image 블록      */
 function getFirstImage(pageId) {
-  return getBlocks(pageId).then(function(data) {
-    var blocks = data.results || [];
-    for (var i = 0; i < blocks.length; i++) {
-      var b = blocks[i];
-      if (b.type === 'image') {
-        var src = null;
-        if (b.image.type === 'external') src = b.image.external && b.image.external.url;
-        else if (b.image.type === 'file') src = b.image.file && b.image.file.url;
-        if (src) return '/img?url=' + encodeURIComponent(src);
-      }
+  /* 페이지 정보에서 커버 이미지 먼저 확인 */
+  return getPage(pageId).then(function(pg) {
+    if (pg && pg.cover) {
+      var c = pg.cover;
+      var coverSrc = c.type === 'external'
+        ? (c.external && c.external.url)
+        : (c.file    && c.file.url);
+      if (coverSrc) return '/img?url=' + encodeURIComponent(coverSrc);
     }
-    return null;
+    /* 커버 없으면 본문 블록에서 첫 번째 이미지 탐색 */
+    return getBlocks(pageId).then(function(data) {
+      var blocks = data.results || [];
+      for (var i = 0; i < blocks.length; i++) {
+        var b = blocks[i];
+        if (b.type === 'image') {
+          var src = null;
+          if (b.image.type === 'external') src = b.image.external && b.image.external.url;
+          else if (b.image.type === 'file') src = b.image.file    && b.image.file.url;
+          if (src) return '/img?url=' + encodeURIComponent(src);
+        }
+      }
+      return null;
+    });
   }).catch(function(){ return null; });
 }
 
@@ -114,13 +126,15 @@ function collectImages(blockId, depth) {
 }
 
 /* ── 썸네일 병렬 첨부 ────────────────────────────────────── */
+/* _thumbnail = /thumb/{pageId} 형태로 저장                   */
+/* 브라우저가 실제로 이미지를 요청할 때 Worker가 실시간으로    */
+/* Notion에서 최신 URL을 받아 프록시하므로 만료 문제 없음      */
 function withThumbnails(data) {
   var pages = data.results || [];
-  return Promise.all(pages.map(function(p){ return getFirstImage(p.id); }))
-    .then(function(thumbs) {
-      pages.forEach(function(p, i){ if (thumbs[i]) p._thumbnail = thumbs[i]; });
-      return data;
-    });
+  pages.forEach(function(p) {
+    p._thumbnail = '/thumb/' + p.id;
+  });
+  return Promise.resolve(data);
 }
 
 /* ── Worker 이벤트 리스너 ────────────────────────────────── */
@@ -137,7 +151,7 @@ function handleRequest(request) {
     return Promise.resolve(new Response(null, { status: 204, headers: CORS_HEADERS }));
   }
 
-  /* 이미지 프록시 */
+  /* 이미지 프록시 (URL 직접 전달) */
   if (path === '/img') {
     var imgUrl = url.searchParams.get('url');
     if (!imgUrl) return Promise.resolve(new Response('missing url', { status: 400 }));
@@ -145,6 +159,27 @@ function handleRequest(request) {
       var ct = imgRes.headers.get('content-type') || 'image/jpeg';
       var h  = Object.assign({}, CORS_IMG_HEADERS, { 'Content-Type': ct });
       return new Response(imgRes.body, { status: imgRes.status, headers: h });
+    });
+  }
+
+  /* 썸네일 프록시 (pageId 기반, 항상 최신 이미지) */
+  /* /thumb/{pageId} → 실시간으로 Notion에서 첫 이미지 URL 조회 후 프록시 */
+  if (path.indexOf('/thumb/') === 0) {
+    var thumbPageId = path.slice(7);
+    if (!thumbPageId) return Promise.resolve(new Response('missing pageId', { status: 400 }));
+    return getFirstImage(thumbPageId).then(function(imgPath) {
+      if (!imgPath) {
+        return new Response('no image', { status: 404, headers: CORS_IMG_HEADERS });
+      }
+      /* imgPath = '/img?url=...' 형태이므로 실제 URL 추출 */
+      var actualUrl = decodeURIComponent(imgPath.replace('/img?url=', ''));
+      return fetch(actualUrl).then(function(imgRes) {
+        var ct = imgRes.headers.get('content-type') || 'image/jpeg';
+        var h  = Object.assign({}, CORS_IMG_HEADERS, { 'Content-Type': ct });
+        return new Response(imgRes.body, { status: imgRes.status, headers: h });
+      });
+    }).catch(function() {
+      return new Response('error', { status: 500, headers: CORS_IMG_HEADERS });
     });
   }
 
