@@ -239,7 +239,8 @@
       var tag         = prop(item, '공지구분') || '공지사항';
       var dateStr     = formatDate(item.created_time);
       var isImportant = tag === '중요';
-      var targetUrl   = resolveTargetUrl(item);   /* 'URL' 속성 */
+      /* URL 속성 있으면 그 링크, 없으면 Notion 글 자체 URL */
+      var targetUrl = resolveTargetUrl(item) || item.public_url || item.url || null;
 
       /* 카드 전체가 클릭 가능한 링크 역할 → <article> + role="button" */
       var card = document.createElement('article');
