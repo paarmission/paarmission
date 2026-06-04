@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mission Member Debug</title>
+  <style>
+    body { font-family: monospace; padding: 24px; background: #f5f5f5; }
+    h2 { color: #1a2e4a; }
+    .section { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .label { font-weight: bold; color: #555; font-size: .85rem; margin-bottom: 8px; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow: auto; font-size: .8rem; max-height: 400px; white-space: pre-wrap; word-break: break-all; }
+    .status-ok  { color: #22c55e; font-weight: bold; }
+    .status-err { color: #ef4444; font-weight: bold; }
+    button { padding: 10px 24px; background: #1a2e4a; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: .9rem; margin-right: 8px; margin-bottom: 8px; }
+    button:hover { background: #243d5e; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: .78rem; font-weight: bold; }
+    .badge-ok  { background: #dcfce7; color: #166534; }
+    .badge-err { background: #fee2e2; color: #991b1b; }
+    .info-row  { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h2>🔍 단기선교 참석자 명단 — Notion 연동 디버그</h2>
+  <p style="color:#666;font-size:.9rem;">Worker와 Notion API 응답을 직접 확인합니다.</p>
+
+  <div class="section">
+    <div class="label">STEP 1. Worker 생존 확인</div>
+    <button onclick="testWorker()">Worker 루트 호출</button>
+    <div id="worker-result"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">STEP 2. /mission-member API 응답 확인</div>
+    <button onclick="testMissionMember()">mission-member 호출</button>
+    <div id="member-result"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">STEP 3. 첫 번째 페이지 blocks 확인 (아이템이 있을 때)</div>
+    <input id="page-id-input" placeholder="Page ID 입력 (있으면)" style="padding:8px;border:1px solid #ddd;border-radius:4px;width:320px;font-size:.9rem;" />
+    <button onclick="testBlocks()">blocks 호출</button>
+    <div id="blocks-result"></div>
+  </div>
+
+  <script>
+    const WORKER = 'https://dark-pine-8ced.superddj00.workers.dev';
+
+    function renderJSON(data, el) {
+      const str = JSON.stringify(data, null, 2);
+      el.innerHTML = '<pre>' + str.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>';
+    }
+
+    function statusBadge(ok) {
+      return ok
+        ? '<span class="badge badge-ok">✅ 정상</span>'
+        : '<span class="badge badge-err">❌ 오류</span>';
+    }
+
+    async function testWorker() {
+      const el = document.getElementById('worker-result');
+      el.innerHTML = '<p style="color:#888;">불러오는 중...</p>';
+      try {
+        const res  = await fetch(WORKER + '/');
+        const data = await res.json();
+        el.innerHTML = '<div class="info-row">'
+          + statusBadge(res.ok)
+          + '<span class="badge" style="background:#e0f2fe;color:#0369a1;">HTTP ' + res.status + '</span>'
+          + '</div>';
+        renderJSON(data, el);
+      } catch(e) {
+        el.innerHTML = statusBadge(false) + '<pre style="color:#ef4444;">' + e.message + '</pre>';
+      }
+    }
+
+    async function testMissionMember() {
+      const el = document.getElementById('member-result');
+      el.innerHTML = '<p style="color:#888;">불러오는 중...</p>';
+      try {
+        const res  = await fetch(WORKER + '/mission-member', { cache: 'no-store' });
+        const data = await res.json();
+
+        const results = data.results || [];
+        const isError = data.object === 'error';
+
+        let info = '<div class="info-row">'
+          + statusBadge(res.ok && !isError)
+          + '<span class="badge" style="background:#e0f2fe;color:#0369a1;">HTTP ' + res.status + '</span>';
+
+        if (isError) {
+          info += '<span class="badge badge-err">Notion API 에러: ' + (data.message || '') + '</span>';
+        } else {
+          info += '<span class="badge" style="background:#fef9c3;color:#854d0e;">results 수: ' + results.length + '개</span>';
+        }
+        info += '</div>';
+
+        // 첫 번째 페이지 제목 미리보기
+        if (results.length > 0) {
+          info += '<p style="color:#22c55e;font-weight:bold;">✅ 데이터 있음!</p>';
+          info += '<ul style="font-size:.85rem;color:#333;">';
+          results.forEach(function(p, i) {
+            const props = p.properties || {};
+            let title = '(제목 없음)';
+            for (const k of Object.keys(props)) {
+              if (props[k].type === 'title') {
+                title = props[k].title.map(t => t.plain_text).join('') || '(빈 제목)';
+                break;
+              }
+            }
+            info += '<li>[' + i + '] id: ' + p.id + ' | 제목: <strong>' + title + '</strong></li>';
+          });
+          info += '</ul>';
+
+          // 첫 번째 페이지 ID를 input에 자동 입력
+          document.getElementById('page-id-input').value = results[0].id.replace(/-/g, '');
+        } else if (!isError) {
+          info += '<p style="color:#ef4444;font-weight:bold;">⚠️ results가 비어있습니다.</p>';
+          info += '<p style="font-size:.85rem;color:#666;">Notion DB에 페이지가 없거나, 통합(Integration)에 DB 접근 권한이 없을 수 있습니다.</p>';
+        }
+
+        el.innerHTML = info;
+
+        const pre = document.createElement('div');
+        renderJSON(data, pre);
+        el.appendChild(pre);
+
+      } catch(e) {
+        el.innerHTML = statusBadge(false) + '<pre style="color:#ef4444;">' + e.message + '</pre>';
+      }
+    }
+
+    async function testBlocks() {
+      const pageId = document.getElementById('page-id-input').value.trim().replace(/-/g,'');
+      if (!pageId) { alert('Page ID를 입력하세요.'); return; }
+      const el = document.getElementById('blocks-result');
+      el.innerHTML = '<p style="color:#888;">불러오는 중...</p>';
+      try {
+        const res  = await fetch(WORKER + '/mission-member-text/' + pageId, { cache: 'no-store' });
+        const data = await res.json();
+        const lines = data.lines || [];
+        let info = '<div class="info-row">'
+          + statusBadge(res.ok)
+          + '<span class="badge" style="background:#fef9c3;color:#854d0e;">lines 수: ' + lines.length + '개</span>'
+          + '</div>';
+        if (lines.length > 0) {
+          info += '<ul style="font-size:.85rem;color:#333;">';
+          lines.forEach(l => { info += '<li>[' + l.type + '] ' + l.text + '</li>'; });
+          info += '</ul>';
+        }
+        el.innerHTML = info;
+        const pre = document.createElement('div');
+        renderJSON(data, pre);
+        el.appendChild(pre);
+      } catch(e) {
+        el.innerHTML = statusBadge(false) + '<pre style="color:#ef4444;">' + e.message + '</pre>';
+      }
+    }
+  </script>
+</body>
+</html>
