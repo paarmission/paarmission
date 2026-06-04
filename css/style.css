@@ -3239,6 +3239,65 @@ p  { color: var(--color-text); }
   letter-spacing: .05em;
 }
 
+/* ── 개인 후원자 리스트 ─────────────────────────────────── */
+.person-list {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.person-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #eee);
+  text-decoration: none;
+  color: var(--color-text-dark, #222);
+  transition: background .18s, border-color .18s, transform .18s;
+}
+.person-item--link:hover {
+  background: var(--color-bg-alt, #f9f6f1);
+  border-color: var(--color-primary-light, #c9a96e);
+  transform: translateX(4px);
+}
+.person-item-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-accent-light, #fdf3e7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary, #b8860b);
+  font-size: .8rem;
+}
+.person-item-name {
+  flex: 1;
+  font-size: .95rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.person-item-arrow {
+  flex-shrink: 0;
+  font-size: .72rem;
+  color: #bbb;
+  transition: color .18s;
+}
+.person-item--link:hover .person-item-arrow {
+  color: var(--color-primary, #b8860b);
+}
+.person-skeleton {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* ── 반응형 ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .page-hero { min-height: 260px; padding-bottom: 40px; }

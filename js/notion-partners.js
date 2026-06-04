@@ -240,15 +240,63 @@
     }
   }
 
+  /* ── 개인 후원자 리스트 렌더 ───────────────────────────────── */
+  function renderPersonList(listEl, endpoint) {
+    listEl.innerHTML = `
+      <div class="person-skeleton">
+        <div class="skeleton-line" style="width:40%;"></div>
+        <div class="skeleton-line" style="width:55%;margin-top:10px;"></div>
+        <div class="skeleton-line" style="width:35%;margin-top:10px;"></div>
+      </div>`;
+    fetch(WORKER + endpoint)
+      .then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data) {
+        const pages = data.results || [];
+        if (!pages.length) {
+          listEl.innerHTML = `<div class="partner-empty">
+            <i class="fa-solid fa-heart"></i>
+            <p>등록된 개인 후원자가 없습니다.</p>
+          </div>`;
+          return;
+        }
+        listEl.innerHTML = pages.map(function(page, idx) {
+          const p     = page.properties;
+          const name  = titleProp(p);
+          const nUrl  = page.public_url || page.url || null;
+          const delay = Math.min(idx * 60, 300);
+          return `
+            <a class="person-item${nUrl ? ' person-item--link' : ''}"
+               href="${nUrl ? esc(nUrl) : '#'}"
+               target="${nUrl ? '_blank' : '_self'}"
+               rel="noopener noreferrer"
+               data-aos="fade-up" data-aos-delay="${delay}">
+              <span class="person-item-icon"><i class="fa-solid fa-heart"></i></span>
+              <span class="person-item-name">${esc(name)}</span>
+              ${nUrl ? '<span class="person-item-arrow"><i class="fa-solid fa-chevron-right"></i></span>' : ''}
+            </a>`;
+        }).join('');
+        if (window.AOS) AOS.refresh();
+      })
+      .catch(function(err) {
+        console.error('[Partners/person]', err);
+        listEl.innerHTML = errorCard();
+      });
+  }
+
   /* ── 초기화 ────────────────────────────────────────────────── */
   function init() {
     const churchGrid     = document.getElementById('partners-church-grid');
     const missionaryGrid = document.getElementById('partners-missionary-grid');
     const companyGrid    = document.getElementById('partners-company-grid');
+    const personList     = document.getElementById('partners-person-list');
 
     if (churchGrid)     renderGrid(churchGrid,     '/partners-church',     churchCard,     '협력 교회 & 단체');
     if (missionaryGrid) renderGrid(missionaryGrid, '/partners-missionary', missionaryCard, '협력 선교사');
     if (companyGrid)    renderGrid(companyGrid,    '/partners-company',    companyCard,    '협력 기업');
+    if (personList)     renderPersonList(personList, '/partners-person');
   }
 
   if (document.readyState === 'loading') {

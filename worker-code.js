@@ -14,6 +14,7 @@ var DB_THANKS      = '3652025888838074bd91f1ea74de92f9';
 var DB_CHURCH      = '36820258888380188fe3c24f7a17a818';
 var DB_MISSIONARY  = '368202588883805a91b8cb13197ac380';
 var DB_COMPANY     = '3682025888838026a2a2db6dd0be801b';
+var DB_PERSON      = '368202588883800f9b39f7cadbf18836';  /* 개인 후원자 DB ID */
 var DB_NOTICE      = '36a202588883806f931ddc746d633b1e';  /* Pa'ar Notice DB ID */
 
 var CORS_HEADERS = {
@@ -217,6 +218,8 @@ function handleRequest(request) {
     dataPromise = queryPartnersDB(DB_MISSIONARY).then(withThumbnails);
   } else if (path === '/partners-company') {
     dataPromise = queryPartnersDB(DB_COMPANY).then(withThumbnails);
+  } else if (path === '/partners-person') {
+    dataPromise = queryPartnersDB(DB_PERSON);
   } else if (path.indexOf('/page/') === 0) {
     dataPromise = getPage(path.slice(6));
   } else if (path.indexOf('/blocks/') === 0) {
