@@ -14,8 +14,9 @@ var DB_THANKS      = '3652025888838074bd91f1ea74de92f9';
 var DB_CHURCH      = '36820258888380188fe3c24f7a17a818';
 var DB_MISSIONARY  = '368202588883805a91b8cb13197ac380';
 var DB_COMPANY     = '3682025888838026a2a2db6dd0be801b';
-var DB_PERSON      = '36820258888380d79282e017ad394954';  /* 개인 후원자 DB ID */
-var DB_NOTICE      = '36a202588883806f931ddc746d633b1e';  /* Pa'ar Notice DB ID */
+var DB_PERSON         = '36820258888380d79282e017ad394954';  /* 개인 후원자 DB ID */
+var DB_NOTICE         = '36a202588883806f931ddc746d633b1e';  /* Pa'ar Notice DB ID */
+var DB_MISSION_MEMBER = '37520258888380948574cec33b22fffe';  /* 단기선교 참석자 명단 DB ID */
 
 var CORS_HEADERS = {
   'Access-Control-Allow-Origin' : '*',
@@ -222,6 +223,44 @@ function handleRequest(request) {
     /* 최신 글(최근 연도)이 위로 오도록 created_time 내림차순 */
     dataPromise = nPost('/databases/' + DB_PERSON + '/query', {
       sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+    });
+  } else if (path === '/mission-member') {
+    /* 단기선교 참석자 명단 — 최신(최근 연도)이 위로 */
+    dataPromise = nPost('/databases/' + DB_MISSION_MEMBER + '/query', {
+      sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+    });
+  } else if (path.indexOf('/mission-member-text/') === 0) {
+    /* 단기선교 참석자 명단 페이지 본문 텍스트 추출 */
+    var memberPageId = path.slice(21);
+    dataPromise = getBlocks(memberPageId).then(function(data) {
+      var blocks = data.results || [];
+      var lines = [];
+      var numberedIndex = 0;
+      blocks.forEach(function(b) {
+        var richText = null;
+        if (b.type === 'paragraph')               richText = b.paragraph.rich_text;
+        else if (b.type === 'heading_1')          richText = b.heading_1.rich_text;
+        else if (b.type === 'heading_2')          richText = b.heading_2.rich_text;
+        else if (b.type === 'heading_3')          richText = b.heading_3.rich_text;
+        else if (b.type === 'bulleted_list_item') richText = b.bulleted_list_item.rich_text;
+        else if (b.type === 'numbered_list_item') richText = b.numbered_list_item.rich_text;
+
+        if (b.type === 'numbered_list_item') {
+          numberedIndex++;
+        } else {
+          numberedIndex = 0;
+        }
+
+        if (richText) {
+          var text = richText.map(function(r){ return r.plain_text; }).join('');
+          if (text.trim()) lines.push({
+            type:  b.type,
+            text:  text,
+            index: numberedIndex
+          });
+        }
+      });
+      return { lines: lines };
     });
   } else if (path.indexOf('/person-text/') === 0) {
     /* 개인 후원자 글 본문 텍스트 추출 */

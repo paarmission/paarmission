@@ -3339,6 +3339,26 @@ p  { color: var(--color-text); }
   gap: 8px;
 }
 
+/* ── 단기선교 참석자 명단 섹션 (mission-status.html) ──────── */
+.mission-member-section {
+  margin-top: 72px;
+  padding-top: 56px;
+  border-top: 1px solid var(--color-border, #eee);
+}
+.mission-member-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+/* mission-status 내에서는 person-list를 더 넓게 표시 */
+.mission-member-section .person-list {
+  max-width: 760px;
+}
+/* 단기선교 아이콘 — 골드 대신 네이비 계열 사용 */
+.person-item-icon--mission {
+  background: #eef3fb;
+  color: var(--color-navy, #1a2e4a);
+}
+
 /* ── 반응형 ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .page-hero { min-height: 260px; padding-bottom: 40px; }

@@ -101,9 +101,8 @@ function buildLetterCard(page, type, index) {
   var safeTitle= _escAttr(title);
 
   /* Worker v4: page._thumbnail (Worker가 미리 조회한 첫 이미지)
-     없으면 페이지 커버, 없으면 플레이스홀더 */
+     없으면 플레이스홀더 (커버 이미지는 사용하지 않음) */
   var rawThumb = page._thumbnail || null;
-  var coverImg = getCoverUrl(page);
   var imgSrc   = null;
 
   if (rawThumb) {
@@ -111,8 +110,6 @@ function buildLetterCard(page, type, index) {
     imgSrc = rawThumb.indexOf('http') === 0
       ? rawThumb
       : WORKER_URL + rawThumb;
-  } else if (coverImg) {
-    imgSrc = coverImg;
   }
 
   var thumbHTML = imgSrc
@@ -244,13 +241,7 @@ window.notionOpenModal = async function(pageId, title) {
 
     var images = [];
 
-    /* 커버 이미지 (Worker가 cover 필드로 반환) */
-    if (blocksRes.cover) {
-      var coverSrc = blocksRes.cover.indexOf('http') === 0
-        ? blocksRes.cover
-        : WORKER_URL + blocksRes.cover;
-      images.push({ src: coverSrc, caption: title || '표지' });
-    }
+    /* 커버 이미지는 제외 — 이미지 블록만 사용 */
 
     /* 이미지 블록 목록 — Worker가 /img?url=... 프록시 URL로 반환 */
     var imgBlocks = blocksRes.results || [];
