@@ -67,31 +67,20 @@ function getBlocks(id) { return nGet('/blocks/' + id + '/children'); }
 function getPage(id)   { return nGet('/pages/' + id); }
 
 /* ── 첫 번째 이미지 추출 (썸네일용) ─────────────────────── */
-/* 우선순위: 1) 페이지 커버  2) 본문 첫 번째 image 블록      */
+/* 커버 이미지 무시, 본문 첫 번째 image 블록만 사용           */
 function getFirstImage(pageId) {
-  /* 페이지 정보에서 커버 이미지 먼저 확인 */
-  return getPage(pageId).then(function(pg) {
-    if (pg && pg.cover) {
-      var c = pg.cover;
-      var coverSrc = c.type === 'external'
-        ? (c.external && c.external.url)
-        : (c.file    && c.file.url);
-      if (coverSrc) return '/img?url=' + encodeURIComponent(coverSrc);
-    }
-    /* 커버 없으면 본문 블록에서 첫 번째 이미지 탐색 */
-    return getBlocks(pageId).then(function(data) {
-      var blocks = data.results || [];
-      for (var i = 0; i < blocks.length; i++) {
-        var b = blocks[i];
-        if (b.type === 'image') {
-          var src = null;
-          if (b.image.type === 'external') src = b.image.external && b.image.external.url;
-          else if (b.image.type === 'file') src = b.image.file    && b.image.file.url;
-          if (src) return '/img?url=' + encodeURIComponent(src);
-        }
+  return getBlocks(pageId).then(function(data) {
+    var blocks = data.results || [];
+    for (var i = 0; i < blocks.length; i++) {
+      var b = blocks[i];
+      if (b.type === 'image') {
+        var src = null;
+        if (b.image.type === 'external') src = b.image.external && b.image.external.url;
+        else if (b.image.type === 'file') src = b.image.file    && b.image.file.url;
+        if (src) return '/img?url=' + encodeURIComponent(src);
       }
-      return null;
-    });
+    }
+    return null;
   }).catch(function(){ return null; });
 }
 
