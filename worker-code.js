@@ -225,9 +225,9 @@ function handleRequest(request) {
       sorts: [{ timestamp: 'created_time', direction: 'descending' }],
     });
   } else if (path === '/mission-member') {
-    /* 단기선교 참석자 명단 — 최신(최근 연도)이 위로 */
+    /* 단기선교 참석자 명단 — 제목 내림차순(26'>25'>24'...) */
     dataPromise = nPost('/databases/' + DB_MISSION_MEMBER + '/query', {
-      sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+      sorts: [{ property: 'Name', direction: 'descending' }],
     });
   } else if (path.indexOf('/mission-member-text/') === 0) {
     /* 단기선교 참석자 명단 페이지 본문 텍스트 추출 */

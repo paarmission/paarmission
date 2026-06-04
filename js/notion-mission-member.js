@@ -51,7 +51,12 @@
         return res.json();
       })
       .then(function (data) {
-        const pages = data.results || [];
+        /* 제목 내림차순 정렬 — "26' 태국단기선교..." > "25' ..." 순 */
+        const pages = (data.results || []).slice().sort(function(a, b) {
+          const nameA = titleProp(a.properties).toLowerCase();
+          const nameB = titleProp(b.properties).toLowerCase();
+          return nameB.localeCompare(nameA, 'ko');
+        });
 
         if (!pages.length) {
           listEl.innerHTML = `<div class="partner-empty">
