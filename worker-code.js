@@ -225,9 +225,9 @@ function handleRequest(request) {
       sorts: [{ timestamp: 'created_time', direction: 'descending' }],
     });
   } else if (path === '/mission-member') {
-    /* 단기선교 참석자 명단 — 제목 내림차순(26'>25'>24'...) */
+    /* 단기선교 참석자 명단 — created_time 내림차순 (JS 측에서 제목 기준 재정렬) */
     dataPromise = nPost('/databases/' + DB_MISSION_MEMBER + '/query', {
-      sorts: [{ property: 'Name', direction: 'descending' }],
+      sorts: [{ timestamp: 'created_time', direction: 'descending' }],
     });
   } else if (path.indexOf('/mission-member-text/') === 0) {
     /* 단기선교 참석자 명단 페이지 본문 텍스트 추출 */

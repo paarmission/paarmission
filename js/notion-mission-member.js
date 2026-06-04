@@ -51,11 +51,23 @@
         return res.json();
       })
       .then(function (data) {
-        /* 제목 내림차순 정렬 — "26' 태국단기선교..." > "25' ..." 순 */
-        const pages = (data.results || []).slice().sort(function(a, b) {
-          const nameA = titleProp(a.properties).toLowerCase();
-          const nameB = titleProp(b.properties).toLowerCase();
-          return nameB.localeCompare(nameA, 'ko');
+        const raw = data.results || [];
+        console.log('[MissionMember] API 응답 results 수:', raw.length);
+        if (data.object === 'error') {
+          console.error('[MissionMember] Notion API 에러:', data.message);
+        }
+
+        /* 제목 앞 숫자(연도) 추출 → 내림차순 정렬
+           예) "26' 태국단기선교..." → 26, "23' 태국..." → 23
+           숫자가 없으면 0으로 처리 (맨 뒤로) */
+        function extractYear(page) {
+          const name = titleProp(page.properties);
+          const m = name.match(/^(\d+)/);
+          return m ? parseInt(m[1], 10) : 0;
+        }
+
+        const pages = raw.slice().sort(function(a, b) {
+          return extractYear(b) - extractYear(a);
         });
 
         if (!pages.length) {
