@@ -41,14 +41,17 @@
     return d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
   }
 
-  /* ── 정렬: 중요 먼저 → 같은 유형이면 최신 생성 시간 순 ───── */
+  /* ── 정렬: 중요 → NEW → 공지사항 순, 같은 카테고리면 최신순 */
+  var CATEGORY_RANK = { '중요': 0, 'NEW': 1, '공지사항': 2 };
+
   function sortNotices(notices) {
     return notices.slice().sort(function (a, b) {
       var tagA = prop(a, '공지구분') || '';
       var tagB = prop(b, '공지구분') || '';
-      var aRank = tagA === '중요' ? 0 : 1;
-      var bRank = tagB === '중요' ? 0 : 1;
-      if (aRank !== bRank) return aRank - bRank;
+      var rankA = CATEGORY_RANK[tagA] !== undefined ? CATEGORY_RANK[tagA] : 99;
+      var rankB = CATEGORY_RANK[tagB] !== undefined ? CATEGORY_RANK[tagB] : 99;
+      if (rankA !== rankB) return rankA - rankB;
+      /* 같은 카테고리면 최신 글이 위로 */
       var tA = new Date(a.created_time || 0).getTime();
       var tB = new Date(b.created_time || 0).getTime();
       return tB - tA;
