@@ -3245,24 +3245,40 @@ p  { color: var(--color-text); }
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
-.person-item {
+/* 아코디언 래퍼 */
+.person-item--accordion {
+  border: 1px solid var(--color-border, #eee);
+  border-radius: 10px;
+  background: var(--color-surface, #fff);
+  overflow: hidden;
+  transition: box-shadow .2s;
+}
+.person-item--accordion:hover {
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+/* 헤더 버튼 */
+.person-item-header {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 18px;
-  border-radius: 10px;
-  background: var(--color-surface, #fff);
-  border: 1px solid var(--color-border, #eee);
-  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
   color: var(--color-text-dark, #222);
-  transition: background .18s, border-color .18s, transform .18s;
+  font-family: var(--font-sans);
+  transition: background .15s;
 }
-.person-item--link:hover {
+.person-item-header:hover {
   background: var(--color-bg-alt, #f9f6f1);
-  border-color: var(--color-primary-light, #c9a96e);
-  transform: translateX(4px);
+}
+.person-item-header[aria-expanded="true"] {
+  background: var(--color-bg-alt, #f9f6f1);
+  border-bottom: 1px solid var(--color-border, #eee);
 }
 .person-item-icon {
   flex-shrink: 0;
@@ -3284,13 +3300,39 @@ p  { color: var(--color-text); }
 }
 .person-item-arrow {
   flex-shrink: 0;
-  font-size: .72rem;
-  color: #bbb;
-  transition: color .18s;
+  font-size: .75rem;
+  color: #aaa;
+  transition: color .15s;
 }
-.person-item--link:hover .person-item-arrow {
+.person-item-header:hover .person-item-arrow,
+.person-item-header[aria-expanded="true"] .person-item-arrow {
   color: var(--color-primary, #b8860b);
 }
+/* 본문 영역 */
+.person-item-body {
+  padding: 16px 20px 20px 62px;
+  background: var(--color-surface, #fff);
+}
+.person-item-loading {
+  font-size: .85rem;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* 텍스트 라인 */
+.person-text-line {
+  margin: 0 0 8px;
+  line-height: 1.75;
+  font-size: .9rem;
+  color: var(--color-text, #333);
+}
+.person-text-h3 { font-size: 1rem; font-weight: 700; color: var(--color-primary-dark, #222); }
+.person-text-h4 { font-size: .95rem; font-weight: 600; }
+.person-text-h5 { font-size: .9rem; font-weight: 600; }
+.person-text-li { padding-left: 12px; position: relative; }
+.person-text-li::before { content: '•'; position: absolute; left: 0; color: var(--color-primary, #b8860b); }
+.person-text-empty { font-size: .85rem; color: #aaa; }
 .person-skeleton {
   padding: 32px 24px;
   display: flex;

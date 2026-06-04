@@ -219,7 +219,31 @@ function handleRequest(request) {
   } else if (path === '/partners-company') {
     dataPromise = queryPartnersDB(DB_COMPANY).then(withThumbnails);
   } else if (path === '/partners-person') {
-    dataPromise = queryPartnersDB(DB_PERSON);
+    /* 최신 글(최근 연도)이 위로 오도록 created_time 내림차순 */
+    dataPromise = nPost('/databases/' + DB_PERSON + '/query', {
+      sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+    });
+  } else if (path.indexOf('/person-text/') === 0) {
+    /* 개인 후원자 글 본문 텍스트 추출 */
+    var personPageId = path.slice(13);
+    dataPromise = getBlocks(personPageId).then(function(data) {
+      var blocks = data.results || [];
+      var lines = [];
+      blocks.forEach(function(b) {
+        var richText = null;
+        if (b.type === 'paragraph')       richText = b.paragraph.rich_text;
+        else if (b.type === 'heading_1')  richText = b.heading_1.rich_text;
+        else if (b.type === 'heading_2')  richText = b.heading_2.rich_text;
+        else if (b.type === 'heading_3')  richText = b.heading_3.rich_text;
+        else if (b.type === 'bulleted_list_item') richText = b.bulleted_list_item.rich_text;
+        else if (b.type === 'numbered_list_item') richText = b.numbered_list_item.rich_text;
+        if (richText) {
+          var text = richText.map(function(r){ return r.plain_text; }).join('');
+          if (text.trim()) lines.push({ type: b.type, text: text });
+        }
+      });
+      return { lines: lines };
+    });
   } else if (path.indexOf('/page/') === 0) {
     dataPromise = getPage(path.slice(6));
   } else if (path.indexOf('/blocks/') === 0) {

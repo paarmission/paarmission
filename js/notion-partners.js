@@ -263,21 +263,79 @@
           return;
         }
         listEl.innerHTML = pages.map(function(page, idx) {
-          const p     = page.properties;
-          const name  = titleProp(p);
-          const nUrl  = page.public_url || page.url || null;
-          const delay = Math.min(idx * 60, 300);
+          const p      = page.properties;
+          const name   = titleProp(p);
+          const pageId = page.id;
+          const delay  = Math.min(idx * 60, 300);
           return `
-            <a class="person-item${nUrl ? ' person-item--link' : ''}"
-               href="${nUrl ? esc(nUrl) : '#'}"
-               target="${nUrl ? '_blank' : '_self'}"
-               rel="noopener noreferrer"
-               data-aos="fade-up" data-aos-delay="${delay}">
-              <span class="person-item-icon"><i class="fa-solid fa-heart"></i></span>
-              <span class="person-item-name">${esc(name)}</span>
-              ${nUrl ? '<span class="person-item-arrow"><i class="fa-solid fa-chevron-right"></i></span>' : ''}
-            </a>`;
+            <div class="person-item person-item--accordion"
+                 data-page-id="${esc(pageId)}"
+                 data-aos="fade-up" data-aos-delay="${delay}">
+              <button class="person-item-header" aria-expanded="false">
+                <span class="person-item-icon"><i class="fa-solid fa-heart"></i></span>
+                <span class="person-item-name">${esc(name)}</span>
+                <span class="person-item-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+              </button>
+              <div class="person-item-body" hidden>
+                <div class="person-item-content">
+                  <div class="person-item-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i> 불러오는 중...
+                  </div>
+                </div>
+              </div>
+            </div>`;
         }).join('');
+
+        /* 아코디언 클릭 이벤트 */
+        listEl.querySelectorAll('.person-item-header').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const item      = btn.closest('.person-item--accordion');
+            const body      = item.querySelector('.person-item-body');
+            const content   = item.querySelector('.person-item-content');
+            const arrow     = btn.querySelector('.person-item-arrow i');
+            const isOpen    = btn.getAttribute('aria-expanded') === 'true';
+
+            if (isOpen) {
+              /* 닫기 */
+              btn.setAttribute('aria-expanded', 'false');
+              body.hidden = true;
+              arrow.className = 'fa-solid fa-chevron-down';
+            } else {
+              /* 열기 */
+              btn.setAttribute('aria-expanded', 'true');
+              body.hidden = false;
+              arrow.className = 'fa-solid fa-chevron-up';
+
+              /* 이미 로드된 경우 스킵 */
+              if (content.dataset.loaded) return;
+              content.dataset.loaded = 'true';
+
+              const pageId = item.dataset.pageId;
+              fetch(WORKER + '/person-text/' + pageId.replace(/-/g,''))
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                  const lines = d.lines || [];
+                  if (!lines.length) {
+                    content.innerHTML = '<p class="person-text-empty">내용이 없습니다.</p>';
+                    return;
+                  }
+                  content.innerHTML = lines.map(function(line) {
+                    const tag = (line.type === 'heading_1') ? 'h3'
+                              : (line.type === 'heading_2') ? 'h4'
+                              : (line.type === 'heading_3') ? 'h5'
+                              : (line.type === 'bulleted_list_item') ? 'li'
+                              : (line.type === 'numbered_list_item') ? 'li'
+                              : 'p';
+                    return `<${tag} class="person-text-line person-text-${tag}">${esc(line.text)}</${tag}>`;
+                  }).join('');
+                })
+                .catch(function() {
+                  content.innerHTML = '<p class="person-text-empty">내용을 불러오지 못했습니다.</p>';
+                });
+            }
+          });
+        });
+
         if (window.AOS) AOS.refresh();
       })
       .catch(function(err) {
