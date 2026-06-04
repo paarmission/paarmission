@@ -320,13 +320,18 @@
                     return;
                   }
                   content.innerHTML = lines.map(function(line) {
-                    const tag = (line.type === 'heading_1') ? 'h3'
-                              : (line.type === 'heading_2') ? 'h4'
-                              : (line.type === 'heading_3') ? 'h5'
-                              : (line.type === 'bulleted_list_item') ? 'li'
-                              : (line.type === 'numbered_list_item') ? 'li'
-                              : 'p';
-                    return `<${tag} class="person-text-line person-text-${tag}">${esc(line.text)}</${tag}>`;
+                    if (line.type === 'heading_1') {
+                      return `<h3 class="person-text-line person-text-h3">${esc(line.text)}</h3>`;
+                    } else if (line.type === 'heading_2') {
+                      return `<h4 class="person-text-line person-text-h4">${esc(line.text)}</h4>`;
+                    } else if (line.type === 'heading_3') {
+                      return `<h5 class="person-text-line person-text-h5">${esc(line.text)}</h5>`;
+                    } else if (line.type === 'numbered_list_item') {
+                      return `<p class="person-text-line person-text-numbered">${esc(line.index + '. ' + line.text)}</p>`;
+                    } else {
+                      /* paragraph, bulleted_list_item 등 → 텍스트 그대로 */
+                      return `<p class="person-text-line">${esc(line.text)}</p>`;
+                    }
                   }).join('');
                 })
                 .catch(function() {

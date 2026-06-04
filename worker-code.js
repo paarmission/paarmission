@@ -229,17 +229,30 @@ function handleRequest(request) {
     dataPromise = getBlocks(personPageId).then(function(data) {
       var blocks = data.results || [];
       var lines = [];
+      var numberedIndex = 0;
       blocks.forEach(function(b) {
         var richText = null;
-        if (b.type === 'paragraph')       richText = b.paragraph.rich_text;
-        else if (b.type === 'heading_1')  richText = b.heading_1.rich_text;
-        else if (b.type === 'heading_2')  richText = b.heading_2.rich_text;
-        else if (b.type === 'heading_3')  richText = b.heading_3.rich_text;
+        if (b.type === 'paragraph')              richText = b.paragraph.rich_text;
+        else if (b.type === 'heading_1')         richText = b.heading_1.rich_text;
+        else if (b.type === 'heading_2')         richText = b.heading_2.rich_text;
+        else if (b.type === 'heading_3')         richText = b.heading_3.rich_text;
         else if (b.type === 'bulleted_list_item') richText = b.bulleted_list_item.rich_text;
         else if (b.type === 'numbered_list_item') richText = b.numbered_list_item.rich_text;
+
+        /* numbered_list_item 연속 카운트, 다른 블록 나오면 리셋 */
+        if (b.type === 'numbered_list_item') {
+          numberedIndex++;
+        } else {
+          numberedIndex = 0;
+        }
+
         if (richText) {
           var text = richText.map(function(r){ return r.plain_text; }).join('');
-          if (text.trim()) lines.push({ type: b.type, text: text });
+          if (text.trim()) lines.push({
+            type:  b.type,
+            text:  text,
+            index: numberedIndex
+          });
         }
       });
       return { lines: lines };

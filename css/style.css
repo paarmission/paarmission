@@ -3322,16 +3322,15 @@ p  { color: var(--color-text); }
 }
 /* 텍스트 라인 */
 .person-text-line {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   line-height: 1.75;
   font-size: .9rem;
   color: var(--color-text, #333);
 }
-.person-text-h3 { font-size: 1rem; font-weight: 700; color: var(--color-primary-dark, #222); }
-.person-text-h4 { font-size: .95rem; font-weight: 600; }
-.person-text-h5 { font-size: .9rem; font-weight: 600; }
-.person-text-li { padding-left: 12px; position: relative; }
-.person-text-li::before { content: '•'; position: absolute; left: 0; color: var(--color-primary, #b8860b); }
+.person-text-h3 { font-size: 1rem; font-weight: 700; color: var(--color-primary-dark, #222); margin-bottom: 8px; }
+.person-text-h4 { font-size: .95rem; font-weight: 600; margin-bottom: 6px; }
+.person-text-h5 { font-size: .9rem; font-weight: 600; margin-bottom: 6px; }
+.person-text-numbered { margin: 0 0 6px; }
 .person-text-empty { font-size: .85rem; color: #aaa; }
 .person-skeleton {
   padding: 32px 24px;
