@@ -161,8 +161,6 @@
       if (card.dataset.bound) return;
       card.dataset.bound = 'true';
 
-      // 모바일: 터치 이벤트로 유튜브 앱/새 탭 열기
-      // PC: openYtModal 모달로 열기
       const handler = () => {
         const vid   = card.dataset.vid;
         const title = card.dataset.title;
@@ -178,11 +176,31 @@
         }
       };
 
-      card.addEventListener('click', handler);
+      /* ── 터치: 스크롤과 탭을 구분 ──────────────────────────
+         touchstart 에서 시작 좌표 기록,
+         touchend 에서 이동 거리가 10px 이내일 때만 클릭으로 처리.
+         passive:true 로 등록해 스크롤 성능 유지.                  */
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      card.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].clientX;
+        touchStartY = e.changedTouches[0].clientY;
+      }, { passive: true });
+
       card.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        handler();
+        const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
+        const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+        /* 이동 거리 10px 이하 → 탭(클릭)으로 판정 */
+        if (dx < 10 && dy < 10) {
+          e.preventDefault(); // 300ms 딜레이 click 이벤트 중복 방지
+          handler();
+        }
+        /* 이동 거리 크면 스크롤로 판정 → 아무것도 안 함 */
       }, { passive: false });
+
+      /* PC 클릭 */
+      card.addEventListener('click', handler);
     });
   }
 
