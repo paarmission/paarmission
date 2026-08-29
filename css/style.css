@@ -3646,9 +3646,10 @@ body.popup-open { overflow: hidden; }
   z-index: 1;
   width: 100%;
   max-width: 480px;
+  max-height: 90vh;        /* 화면 높이 90% 초과 시 스크롤 */
+  overflow-y: auto;
   background: var(--color-white);
   border-radius: var(--radius-xl);
-  overflow: hidden;
   box-shadow: 0 24px 80px rgba(0,0,0,.35);
   transform: scale(.92) translateY(16px);
   transition: transform .35s cubic-bezier(.34,1.4,.64,1);
@@ -3762,6 +3763,41 @@ body.popup-open { overflow: hidden; }
   line-height: 1.8;
   margin-bottom: 8px;
   white-space: pre-line;
+  /* 텍스트 블록 렌더 시 flex 컬럼으로 줄 단위 표시 */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* 팝업 텍스트 블록 라인 스타일 */
+.np-text-loading,
+.np-text-empty {
+  font-size: .85rem;
+  color: #aaa;
+}
+.np-text-p,
+.np-text-bullet,
+.np-text-num {
+  font-size: .9rem;
+  color: var(--color-text, #333);
+  line-height: 1.75;
+}
+.np-text-h1 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-top: 6px;
+}
+.np-text-h2 {
+  font-size: .98rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-top: 4px;
+}
+.np-text-h3 {
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-top: 2px;
 }
 .np-date {
   font-size: .78rem;

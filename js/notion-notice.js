@@ -133,23 +133,30 @@
       }
     }
 
-    /* ── 이미지: /thumb/{pageId} → Worker가 실시간으로 최신 이미지 프록시 ── */
+    /* ── 이미지 or 텍스트: 이미지가 있으면 이미지, 없으면 텍스트 블록 표시 ── */
     if (imgWrap) {
-      /* _thumbnail = '/thumb/{pageId}' 형태, 항상 WORKER_URL 붙여서 사용 */
       var thumbSrc = WORKER_URL + '/thumb/' + item.id;
       var img = document.createElement('img');
       img.alt       = title;
       img.className = 'np-img';
       img.src       = thumbSrc;
-      img.onerror   = function () { imgWrap.style.display = 'none'; };
-      img.onload    = function () { imgWrap.style.display = 'block'; };
       imgWrap.style.display = 'none'; /* 로드 전 숨김 */
       imgWrap.innerHTML = '';
       imgWrap.appendChild(img);
-
-      /* 이미지 클릭 → URL 속성값으로 이동 */
       imgWrap.style.cursor = 'pointer';
       imgWrap.addEventListener('click', function () { openNotionPage(); });
+
+      img.onload = function () {
+        /* 이미지 성공 → 이미지 영역 표시, 텍스트 본문 숨김 */
+        imgWrap.style.display = 'block';
+        if (contentEl) contentEl.style.display = 'none';
+      };
+
+      img.onerror = function () {
+        /* 이미지 없음 → 이미지 영역 계속 숨기고, 텍스트 블록 로드 */
+        imgWrap.style.display = 'none';
+        loadPopupText(item.id, contentEl);
+      };
     }
 
     /* ── NEW 공지 목록 렌더 ─────────────────────────────────── */
@@ -217,6 +224,37 @@
         closePopup();
       });
     }
+  }
+
+  /* ── 팝업 텍스트 블록 로드 (이미지 없을 때) ─────────────────
+     Worker /person-text/{pageId} 재활용 — 텍스트 블록을 HTML로 렌더  */
+  function loadPopupText(pageId, containerEl) {
+    if (!containerEl) return;
+    var cleanId = pageId.replace(/-/g, '');
+    containerEl.innerHTML = '<span class="np-text-loading"><i class="fa-solid fa-spinner fa-spin"></i> 불러오는 중...</span>';
+    containerEl.style.display = '';
+
+    fetch(WORKER_URL + '/person-text/' + cleanId)
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var lines = d.lines || [];
+        if (!lines.length) {
+          containerEl.innerHTML = '<span class="np-text-empty">내용이 없습니다.</span>';
+          return;
+        }
+        containerEl.innerHTML = lines.map(function (line) {
+          var text = _esc(line.text);
+          if (line.type === 'heading_1') return '<strong class="np-text-h1">' + text + '</strong>';
+          if (line.type === 'heading_2') return '<strong class="np-text-h2">' + text + '</strong>';
+          if (line.type === 'heading_3') return '<strong class="np-text-h3">' + text + '</strong>';
+          if (line.type === 'numbered_list_item') return '<span class="np-text-num">' + _esc(line.index + '. ' + line.text) + '</span>';
+          if (line.type === 'bulleted_list_item') return '<span class="np-text-bullet">• ' + text + '</span>';
+          return '<span class="np-text-p">' + text + '</span>';
+        }).join('');
+      })
+      .catch(function () {
+        containerEl.innerHTML = '<span class="np-text-empty">내용을 불러오지 못했습니다.</span>';
+      });
   }
 
   /* ── 게시판 렌더 (notice.html 전용) ─────────────────────────
